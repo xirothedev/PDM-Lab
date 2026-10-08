@@ -24,8 +24,8 @@ pi Fname, Lname (EMPLOYEE join EMPLOYEE.Ssn = WorkAll.Essn (rho WorkAll ((pi Ess
 S = pi Super_ssn -> Sup (sigma Ssn='123456789' (EMPLOYEE))
 pi Fname, Lname (sigma Super_ssn = Sup AND Ssn != '123456789' (EMPLOYEE cross join S))
 ```
-Rename uses old -> new (`->`) throughout. Single quotes per RelaX help
-(`sigma firstname = 'Bob' (Customer)`); boolean operator shown uppercase (`AND`).
+Renaming is written old -> new throughout. String literals use single quotes
+as in the RelaX help (`sigma firstname = 'Bob' (Customer)`); AND is written uppercase.
 
 Per-query math reference:
 
@@ -37,7 +37,7 @@ Per-query math reference:
    With names: γ Dname; AVG(Salary)→AvgSalary(EMPLOYEE ⋈ EMPLOYEE.Dno=DEPARTMENT.Dnumber DEPARTMENT)
 6. No projects: π Fname,Lname(EMPLOYEE ⋈ EMPLOYEE.Ssn=Nowork.Ssn ρNowork(π Ssn(EMPLOYEE) − π Essn→Ssn(WORKS_ON)))
 7. Employees + dependents (inner): π Fname,Lname,Dependent_name(EMPLOYEE ⋈ EMPLOYEE.Ssn=DEPENDENT.Essn DEPENDENT).
-   All employees incl. childless: replace `join` with `left outer join`.
+   To include employees without dependents: replace `join` with `left outer join`.
 8. Employee-managers: π Fname,Lname(EMPLOYEE ⋈ EMPLOYEE.Ssn=DEPARTMENT.Mgr_ssn DEPARTMENT)
 9. Every project (division): π Fname,Lname(EMPLOYEE ⋈ EMPLOYEE.Ssn=WorkAll.Essn ρWorkAll(π Essn,Pno(WORKS_ON) ÷ ρPnumber→Pno(π Pnumber(PROJECT))))
 10. Same supervisor as '123456789': π Fname,Lname(σ Super_ssn=Sup ∧ Ssn≠'123456789'(EMPLOYEE × ρS(π Super_ssn→Sup(σ Ssn='123456789'(EMPLOYEE)))).
