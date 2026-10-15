@@ -1,0 +1,391 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>
+body { font-family: Helvetica, Arial, sans-serif; font-size: 11px; margin: 40px; color: #111; }
+h1 { font-size: 20px; } h2 { font-size: 15px; margin-top: 28px; border-bottom: 1px solid #999; padding-bottom: 4px; }
+figure { margin: 12px 0; } img { max-width: 100%; border: 1px solid #ccc; }
+figcaption { font-size: 10px; color: #333; margin-top: 4px; }
+pre { font-size: 8.5px; background: #f6f6f6; padding: 10px; white-space: pre-wrap; border: 1px solid #ddd; }
+table { border-collapse: collapse; font-size: 10px; } th, td { border: 1px solid #999; padding: 4px 6px; text-align: left; }
+code { font-size: 10px; }
+</style></head><body>
+<h1>IT079IU - Principles of Database Management - Lab 3</h1>
+<p><b>Le Thanh Trung - ITCSIU25055 - Lab 3</b> (From ER Diagram to a Running Database: MySQL, CREATE and Constraints)</p>
+<p>Engines: local MySQL 8.4.11 (Docker, marker parity) + TiDB Serverless 8.0.11-TiDB-v8.5.3 (assigned server). Script runs twice clean on both.</p>
+
+<h2>0. Pre-lab evidence</h2>
+<figure><img src="fig_A_version.png"/><figcaption>Fig A - TiDB version + engine: 8.0.11-TiDB-v8.5.3, InnoDB. Local MySQL 8.4.11 verified via CLI (SELECT VERSION, script re-run).</figcaption></figure>
+<p>Local MySQL 8.4 container <code>pdmlab-mysql84</code> on localhost:3306; Workbench connection PDM LAB targets TiDB. No passwords in screenshots.</p>
+
+<h2>Part B.1 - Relation schema (comment block at top of script)</h2>
+<p>Full schema with underlined PKs, *-marked FKs and separately stated referential constraints is the header comment of <code>create_coursemanagement.sql</code> (reproduced in the script listing below).</p>
+
+<h2>Part B - Database build evidence</h2>
+<figure><img src="fig_B_schema_tree.png"/><figcaption>Fig B - SCHEMAS panel: CourseManagement has 7 tables (Course, Department, Lecturer, LecturerPhone, Register, Student, Teach) + Views &gt; StudentWithAge.</figcaption></figure>
+<figure><img src="fig_B_course.png"/><figcaption>Fig B.7-1 - Course incl. Credits from ALTER (IT079IU uses DEFAULT 3). 5 rows.</figcaption></figure>
+<figure><img src="fig_B_join.png"/><figcaption>Fig B.7-2 - Student JOIN Register, 14 rows incl. one NULL grade (registered, not yet graded).</figcaption></figure>
+<figure><img src="fig_B_phones.png"/><figcaption>Fig B.7-3 - LecturerPhone, 6 rows for 5 lecturers.</figcaption></figure>
+<figure><img src="fig_B_view.png"/><figcaption>Fig B.4 - StudentWithAge view computes Age at query time (22). Age is never stored.</figcaption></figure>
+<figure><img src="fig_B_constraints.png"/><figcaption>Fig - INFORMATION_SCHEMA.TABLE_CONSTRAINTS for CourseManagement (PK/FK/UQ names; CHECKs enforced - see Part C).</figcaption></figure>
+<p>Counts exceed minima: 4 departments, 6 lecturers, 8 students, 5 courses, 14 registrations, phones for 5 lecturers. ALTERs: <code>Course ADD Credits</code> (column) + <code>LecturerPhone ADD CK_Phone_Length</code> (constraint). Third CHECK pair: CK_Student_DoB, CK_Register_Grade.</p>
+<p>Precision note: Register.Grade is DECIMAL(5,2), not the snippet's 4,2 - with 4,2 a grade of 150 dies on the column range (ERROR 1264) and the named CHECK never fires. 5,2 lets the value exist so CK_Register_Grade is what rejects it.</p>
+
+<h2>Part C - Constraint proofs (MySQL 8.4.11 exact errors; TiDB screenshots where provided)</h2>
+<table border="1" cellpadding="4">
+<tr><th>#</th><th>Statement</th><th>MySQL 8.4 result</th><th>Enforcer</th></tr>
+<tr><td>1</td><td><code>INSERT INTO Register VALUES ('IT09999','IT079IU',50.00)</code></td><td>ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (CONSTRAINT FK_Register_Student)</td><td>FK_Register_Student</td></tr>
+<tr><td>2</td><td><code>INSERT INTO Student ... ('ITITIU1001',...)</code></td><td>ERROR 1062 (23000): Duplicate entry 'ITITIU1001' for key 'Student.PRIMARY'</td><td>PRIMARY</td></tr>
+<tr><td>3</td><td><code>INSERT INTO Student ... ('ITITIU1009',...,'2150-01-01',...)</code></td><td>ERROR 3819 (HY000): Check constraint 'CK_Student_DoB' is violated.</td><td>CK_Student_DoB</td></tr>
+<tr><td>4</td><td><code>INSERT INTO Register VALUES ('ITITIU1007','IT045IU',150.00)</code></td><td>ERROR 3819 (HY000): Check constraint 'CK_Register_Grade' is violated.</td><td>CK_Register_Grade</td></tr>
+<tr><td>5</td><td><code>DELETE FROM Course WHERE CourseID='IT079IU'</code></td><td>ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (CONSTRAINT FK_Register_Course)</td><td>FK_Register_Course</td></tr>
+</table>
+<figure><img src="fig_C1_fk.png"/><figcaption>Fig C1 - TiDB rejects case 1 with the same 1452 / FK_Register_Student.</figcaption></figure>
+<figure><img src="fig_C2_dup.png"/><figcaption>Fig C2 - TiDB rejects case 2 with 1062 for key Student.PRIMARY (value masked as '?' by this Workbench build; MySQL 8.4 names the value).</figcaption></figure>
+<figure><img src="fig_C3_tidb.png"/><figcaption>Fig C3 - HONEST DISCLOSURE: on TiDB Serverless this statement returned OK, 1 row affected - CK_Student_DoB did NOT fire there. On MySQL 8.4.11 the same statement is rejected with ERROR 3819 above. The stray TiDB row (ITITIU1009) is test pollution only; the submitted MySQL dump is unaffected. Cleanup: DELETE FROM Student WHERE StudentID='ITITIU1009'.</figcaption></figure>
+<p>Cases 4-5: no Workbench screenshots were provided; evidence is the CLI-captured MySQL 8.4 errors above (each statement run individually). Schema-vs-application (0.5): constraints live in the schema so every access path - any app, notebook, dump-restore, manual SQL - is checked by the engine. App-side checks only cover the paths the app implements; a second client, a forgotten form, or a raw INSERT bypasses them silently.</p>
+
+<h2>Part D - Database diagram (generated from the live schema)</h2>
+<figure><img src="fig_D_eer.png"/><figcaption>Fig D - Database diagram generated from the database itself (CREATE TABLE + INFORMATION_SCHEMA), not hand-drawn. Red edges are FKs. Workbench 26.7.0 (this install) has no Database &gt; Reverse Engineer - its Database menu is HeatWave-branded - so the EER was rendered from live schema metadata instead.</figcaption></figure>
+<p><b>D1 - two things from the ER diagram (sec 3) gone from the DB diagram:</b> (1) the derived attribute Age - never stored, computed at query time by the StudentWithAge view; (2) the relationship diamonds Belong/Register/Teach and the multivalued Phone - Belong became the FK column Lecturer.DeptNo, Register and Teach became tables with two FKs each, Phone became the LecturerPhone table. A relationship cannot hold rows; only an entity table can.<br/>
+<b>D2 - Register as a table with two FKs:</b> produced by the M:N relationship Register (Student-Course) carrying Grade. It could not stay a relationship because the relational model has no relationship construct - to store one grade per (student, course) pair and enforce both referential lines, the M:N must be mapped to its own table with a composite PK and two FKs.</p>
+
+<h2>Part E - Backup and restore</h2>
+<p>Submission dump (MySQL 8.4): <code>mysqldump -uroot --databases CourseManagement --routines --triggers &gt; CourseManagement_backup.sql</code> (268 lines, 7 CREATE TABLE, Grade decimal(5,2)). Restore path: table-only dump into CM_Restored. TiDB pair used <code>--no-tablespaces</code>. No screenshots were provided for this step; counts below are CLI-verified on both engines.</p>
+<table border="1" cellpadding="4">
+<tr><th>db</th><th>regs</th><th>studs</th><th>courses</th></tr>
+<tr><td>CourseManagement</td><td>14</td><td>8</td><td>5</td></tr>
+<tr><td>CM_Restored</td><td>14</td><td>8</td><td>5</td></tr>
+</table>
+<p>Counts match on MySQL 8.4.11 and on TiDB (14/8/5 both databases).</p>
+
+<h2>Attachments</h2>
+<p><code>create_coursemanagement.sql</code> (runs twice clean on fresh MySQL 8.4 and on TiDB) and <code>CourseManagement_backup.sql</code> (MySQL 8.4 logical dump with CREATE DATABASE/USE).</p>
+
+<h2>Script listing</h2>
+<pre>-- ============================================================================
+-- IT079IU - Principles of Database Management
+-- Lab 3: From ER Diagram to a Running Database - MySQL, CREATE and Constraints
+--
+-- Student:  Le Thanh Trung (ITCSIU25055)
+-- Script:   create_coursemanagement.sql
+-- Target:   MySQL Community Server 8.0.16+ / 8.4 LTS, InnoDB storage engine
+-- Usage:    runs top to bottom on a fresh MySQL server AND succeeds on a second
+--           run on the same server without manual intervention.
+--           The only reset is the CourseManagement lab database itself.
+--
+-- Naming convention for constraints: PK_&lt;table&gt;, FK_&lt;table&gt;_&lt;reftable&gt;,
+--                                    UQ_&lt;table&gt;_&lt;column&gt;, CK_&lt;table&gt;_&lt;rule&gt;
+-- ============================================================================
+
+
+-- ----------------------------------------------------------------------------
+-- PART B.1 - RELATION SCHEMA (full, style of lab section 4.2)
+-- Primary keys underlined with ---- ; foreign keys marked with *
+-- ----------------------------------------------------------------------------
+--
+-- Department (DeptNo, DeptName)
+--            -------
+--   Entity integrity : DeptNo NOT NULL, unique -&gt; primary key
+--   Domain integrity : DeptNo CHAR(4); DeptName VARCHAR(60) NOT NULL
+--
+-- Lecturer (LecturerID, LecturerName, DeptNo*)
+--           --------------
+--   Entity integrity : LecturerID NOT NULL, unique -&gt; primary key
+--   Domain integrity : LecturerName VARCHAR(60) NOT NULL;
+--                      DeptNo CHAR(4) NOT NULL
+--   Referential      : Lecturer[DeptNo] subset-of Department[DeptNo]
+--                      ON DELETE RESTRICT ON UPDATE RESTRICT
+--                      (a lecturer cannot be orphaned from a department)
+--
+-- Student (StudentID, StudentName, DoB, Major, Email)
+--          -----------
+--   Entity integrity : StudentID NOT NULL, unique -&gt; primary key
+--   Domain integrity : StudentName VARCHAR(60) NOT NULL; DoB DATE NOT NULL;
+--                      Major VARCHAR(40) NULL; Email VARCHAR(80) NULL unique
+--   CHECK (DoB)      : DoB BETWEEN &#x27;1900-01-01&#x27; AND &#x27;2026-10-15&#x27;
+--                      - age is a DERIVED attribute: not stored (see the
+--                        StudentWithAge view below)
+--   Note on the fixed bound: MySQL CHECK expressions cannot use CURDATE()
+--   (non-deterministic functions are rejected), so the upper bound is the lab
+--   date 2026-10-15 rather than &quot;today&quot;. In production, &quot;not in the future&quot;
+--   would be enforced by a trigger or application validation as well.
+--
+-- Course (CourseID, CourseName)           [Credits added by ALTER below]
+--        --------
+--   Entity integrity : CourseID NOT NULL, unique -&gt; primary key
+--   Domain integrity : CourseName VARCHAR(60) NOT NULL;
+--                      Credits TINYINT UNSIGNED NOT NULL DEFAULT 3 (ALTER)
+--
+-- LecturerPhone (LecturerID*, Phone)     [phone length CHECK added by ALTER]
+--               -------
+--   Entity integrity : (LecturerID, Phone) composite -&gt; primary key;
+--                      a phone number belongs to exactly one lecturer
+--   Domain integrity : Phone VARCHAR(15) NOT NULL,
+--                      CHAR_LENGTH(Phone) BETWEEN 7 AND 15 (ALTER)
+--   Referential      : LecturerPhone[LecturerID] subset-of Lecturer[LecturerID]
+--                      ON DELETE CASCADE ON UPDATE CASCADE
+--                      (a phone has no meaning without its lecturer)
+--
+-- Register (StudentID*, CourseID*, Grade)
+--          ----------
+--   Entity integrity : (StudentID, CourseID) composite -&gt; primary key
+--   Domain integrity : Grade DECIMAL(5,2) NULL, CHECK BETWEEN 0 AND 100;
+--                      NULL allowed = registered but grade not yet assigned.
+--                      Precision is deliberately 5,2 (not the 4,2 of the lab
+--                      snippet): with 4,2 an out-of-range grade like 150 would
+--                      be rejected by the column range (ERROR 1264) and the
+--                      check would never fire. The 0-100 rule must live in the
+--                      named constraint, not silently in the type.
+--   Referential      : Register[StudentID] subset-of Student[StudentID]
+--                         ON DELETE CASCADE ON UPDATE CASCADE
+--                      (delete a student -&gt; their registrations go too)
+--                      Register[CourseID] subset-of Course[CourseID]
+--                         ON DELETE RESTRICT ON UPDATE RESTRICT
+--                      (a course that still has registrations cannot die)
+--
+-- Teach (CourseID*, LecturerID*)
+--       ------
+--   Entity integrity : (CourseID, LecturerID) composite -&gt; primary key
+--   Referential      : Teach[CourseID]   subset-of Course[CourseID]
+--                         ON DELETE RESTRICT ON UPDATE RESTRICT
+--                      Teach[LecturerID] subset-of Lecturer[LecturerID]
+--                         ON DELETE RESTRICT ON UPDATE RESTRICT
+--
+-- Referential constraints (stated separately):
+--   Lecturer[DeptNo]                subset-of Department[DeptNo]
+--   Register[StudentID]             subset-of Student[StudentID]
+--   Register[CourseID]              subset-of Course[CourseID]
+--   LecturerPhone[LecturerID]       subset-of Lecturer[LecturerID]
+--   Teach[CourseID]                 subset-of Course[CourseID]
+--   Teach[LecturerID]               subset-of Lecturer[LecturerID]
+-- SET DEFAULT is NOT used anywhere: MySQL InnoDB does not support it as a
+-- foreign-key referential action (see lab section 4.3).
+-- ----------------------------------------------------------------------------
+
+
+-- ----------------------------------------------------------------------------
+-- PART B.2 - CREATE AND SELECT THE DATABASE
+-- ----------------------------------------------------------------------------
+DROP DATABASE IF EXISTS CourseManagement;
+CREATE DATABASE CourseManagement
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_0900_ai_ci;
+USE CourseManagement;
+
+
+-- ----------------------------------------------------------------------------
+-- PART B.3 - CREATE TABLES, PARENTS BEFORE CHILDREN
+-- ----------------------------------------------------------------------------
+
+-- Parent table: Department
+CREATE TABLE Department (
+  DeptNo   CHAR(4)     NOT NULL,
+  DeptName VARCHAR(60) NOT NULL,
+  CONSTRAINT PK_Department PRIMARY KEY (DeptNo),
+  CONSTRAINT CK_Department_DeptNo_Format
+    CHECK (CHAR_LENGTH(DeptNo) = 4)
+) ENGINE = InnoDB;
+
+-- Strong entity: Student (age is NOT stored - it is derived; see the view)
+CREATE TABLE Student (
+  StudentID   CHAR(10)    NOT NULL,
+  StudentName VARCHAR(60) NOT NULL,
+  DoB         DATE        NOT NULL,
+  Major       VARCHAR(40) NULL,
+  Email       VARCHAR(80) NULL,
+  CONSTRAINT PK_Student PRIMARY KEY (StudentID),
+  CONSTRAINT UQ_Student_Email UNIQUE (Email),
+  -- Fixed upper bound: MySQL CHECK cannot call CURDATE(); bound = lab date.
+  -- Part C case 3 (2150-01-01) is rejected by this constraint.
+  CONSTRAINT CK_Student_DoB
+    CHECK (DoB BETWEEN &#x27;1900-01-01&#x27; AND &#x27;2026-10-15&#x27;)
+) ENGINE = InnoDB;
+
+-- Strong entity: Lecturer, with the 1:N &quot;Belong&quot; mapping: the key of the 1
+-- side (Department) is placed in the table of the N side (Lecturer).
+CREATE TABLE Lecturer (
+  LecturerID   CHAR(6)     NOT NULL,
+  LecturerName VARCHAR(60) NOT NULL,
+  DeptNo       CHAR(4)     NOT NULL,
+  CONSTRAINT PK_Lecturer PRIMARY KEY (LecturerID),
+  CONSTRAINT FK_Lecturer_Department FOREIGN KEY (DeptNo)
+    REFERENCES Department (DeptNo)
+    ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB;
+
+-- Strong entity: Course
+CREATE TABLE Course (
+  CourseID   CHAR(8)     NOT NULL,
+  CourseName VARCHAR(60) NOT NULL,
+  CONSTRAINT PK_Course PRIMARY KEY (CourseID)
+) ENGINE = InnoDB;
+
+-- Multivalued attribute: one lecturer can have many phone numbers.
+-- A lecturer&#x27;s phones die with the lecturer (CASCADE) and key changes cascade
+-- outward from Lecturer: NULL is not allowed, so SET NULL is not an option.
+CREATE TABLE LecturerPhone (
+  LecturerID CHAR(6)     NOT NULL,
+  Phone      VARCHAR(15) NOT NULL,
+  CONSTRAINT PK_LecturerPhone PRIMARY KEY (LecturerID, Phone),
+  CONSTRAINT FK_LecturerPhone_Lecturer FOREIGN KEY (LecturerID)
+    REFERENCES Lecturer (LecturerID)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+-- M:N relationship &quot;Register&quot;: resolved into a table with two foreign keys,
+-- because a relationship cannot hold rows - only an entity table can.
+-- DECIMAL(5,2) so that an illegal 150 is caught by CK_Register_Grade
+-- (the named constraint), not by the column&#x27;s own range.
+CREATE TABLE Register (
+  StudentID CHAR(10)      NOT NULL,
+  CourseID   CHAR(8)      NOT NULL,
+  Grade     DECIMAL(5,2) NULL,
+  CONSTRAINT PK_Register PRIMARY KEY (StudentID, CourseID),
+  CONSTRAINT FK_Register_Student FOREIGN KEY (StudentID)
+    REFERENCES Student (StudentID)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_Register_Course FOREIGN KEY (CourseID)
+    REFERENCES Course (CourseID)
+    ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT CK_Register_Grade CHECK (Grade BETWEEN 0 AND 100)
+) ENGINE = InnoDB;
+
+-- M:N relationship &quot;Teach&quot;: a course may be taught by several lecturers and a
+-- lecturer may teach several courses.
+CREATE TABLE Teach (
+  CourseID   CHAR(8) NOT NULL,
+  LecturerID CHAR(6) NOT NULL,
+  CONSTRAINT PK_Teach PRIMARY KEY (CourseID, LecturerID),
+  CONSTRAINT FK_Teach_Course FOREIGN KEY (CourseID)
+    REFERENCES Course (CourseID)
+    ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT FK_Teach_Lecturer FOREIGN KEY (LecturerID)
+    REFERENCES Lecturer (LecturerID)
+    ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB;
+
+
+-- ----------------------------------------------------------------------------
+-- PART B.4 - STUDENT AGE AS A VIEW (derived attribute is never stored)
+-- MySQL cannot use CURDATE() in a generated column, and a generated column
+-- would go stale anyway; the view computes the age at query time.
+-- ----------------------------------------------------------------------------
+CREATE VIEW StudentWithAge AS
+  SELECT StudentID, StudentName, DoB, Major, Email,
+         TIMESTAMPDIFF(YEAR, DoB, CURDATE()) AS Age
+  FROM Student;
+
+
+-- ----------------------------------------------------------------------------
+-- PART B.6a - ALTER: add a COLUMN to an existing table
+-- ----------------------------------------------------------------------------
+ALTER TABLE Course
+  ADD COLUMN Credits TINYINT UNSIGNED NOT NULL DEFAULT 3;
+
+-- PART B.6b - ALTER: add a CONSTRAINT to an existing table
+ALTER TABLE LecturerPhone
+  ADD CONSTRAINT CK_Phone_Length
+    CHECK (CHAR_LENGTH(Phone) BETWEEN 7 AND 15);
+
+
+-- ----------------------------------------------------------------------------
+-- PART B.5 - SAMPLE DATA (plausible, no placeholder rows)
+-- Parent rows are inserted before the children that reference them.
+-- ----------------------------------------------------------------------------
+INSERT INTO Department (DeptNo, DeptName) VALUES
+  (&#x27;ISYS&#x27;, &#x27;Information Systems&#x27;),
+  (&#x27;CSEN&#x27;, &#x27;Computer Science and Engineering&#x27;),
+  (&#x27;BIOT&#x27;, &#x27;Biotechnology&#x27;),
+  (&#x27;MATH&#x27;, &#x27;Mathematics and Statistics&#x27;);
+
+INSERT INTO Student (StudentID, StudentName, DoB, Major, Email) VALUES
+  (&#x27;ITITIU1001&#x27;, &#x27;Nguyen Minh Anh&#x27;,    &#x27;2004-05-12&#x27;, &#x27;Information Systems&#x27;,              &#x27;minhanh.nguyen@iu.edu.vn&#x27;),
+  (&#x27;ITITIU1002&#x27;, &#x27;Tran Quoc Bao&#x27;,      &#x27;2003-11-02&#x27;, &#x27;Computer Science and Engineering&#x27;,  &#x27;quocbao.tran@iu.edu.vn&#x27;),
+  (&#x27;ITITIU1003&#x27;, &#x27;Le Thi Hong Nhung&#x27;,  &#x27;2004-03-25&#x27;, &#x27;Data Science&#x27;,                      &#x27;hongnhung.le@iu.edu.vn&#x27;),
+  (&#x27;ITITIU1004&#x27;, &#x27;Pham Duc Duy&#x27;,       &#x27;2003-08-17&#x27;, &#x27;Information Systems&#x27;,              &#x27;ducduy.pham@iu.edu.vn&#x27;),
+  (&#x27;ITITIU1005&#x27;, &#x27;Vo Thanh Truc&#x27;,      &#x27;2004-12-09&#x27;, &#x27;Software Engineering&#x27;,              &#x27;thanhtruc.vo@iu.edu.vn&#x27;),
+  (&#x27;ITITIU1006&#x27;, &#x27;Dang Ngoc Mai&#x27;,      &#x27;2005-01-30&#x27;, &#x27;Computer Science and Engineering&#x27;,  &#x27;ngocmai.dang@iu.edu.vn&#x27;),
+  (&#x27;ITITIU1007&#x27;, &#x27;Bui Tuan Kiet&#x27;,      &#x27;2003-06-14&#x27;, &#x27;Information Systems&#x27;,              &#x27;tuankiet.bui@iu.edu.vn&#x27;),
+  (&#x27;ITITIU1008&#x27;, &#x27;Hoang Thu Ha&#x27;,       &#x27;2004-09-21&#x27;, &#x27;Data Science&#x27;,                      &#x27;thuha.hoang@iu.edu.vn&#x27;);
+
+INSERT INTO Lecturer (LecturerID, LecturerName, DeptNo) VALUES
+  (&#x27;LE0001&#x27;, &#x27;Dr. Nguyen Van Hien&#x27;,    &#x27;ISYS&#x27;),
+  (&#x27;LE0002&#x27;, &#x27;Dr. Tran Thi Lan&#x27;,       &#x27;ISYS&#x27;),
+  (&#x27;LE0003&#x27;, &#x27;Dr. Le Hoang Nam&#x27;,       &#x27;CSEN&#x27;),
+  (&#x27;LE0004&#x27;, &#x27;MSc. Pham Minh Tuan&#x27;,    &#x27;CSEN&#x27;),
+  (&#x27;LE0005&#x27;, &#x27;Dr. Vo Thi Kim Ngan&#x27;,    &#x27;MATH&#x27;),
+  (&#x27;LE0006&#x27;, &#x27;MSc. Doan Gia Khang&#x27;,    &#x27;BIOT&#x27;);
+
+-- IT079IU gets its Credits from the ALTER default (3) - it proves DEFAULT.
+INSERT INTO Course (CourseID, CourseName) VALUES
+  (&#x27;IT079IU&#x27;, &#x27;Principles of Database Management&#x27;);
+INSERT INTO Course (CourseID, CourseName, Credits) VALUES
+  (&#x27;IT003IU&#x27;, &#x27;Data Structures and Algorithms&#x27;,        3),
+  (&#x27;IT005IU&#x27;, &#x27;Object-Oriented Programming&#x27;,           3),
+  (&#x27;IT012IU&#x27;, &#x27;Computer Networks&#x27;,                     3),
+  (&#x27;IT045IU&#x27;, &#x27;Machine Learning Fundamentals&#x27;,         2);
+
+-- Phone numbers for 5 lecturers (requirement: at least 3).
+INSERT INTO LecturerPhone (LecturerID, Phone) VALUES
+  (&#x27;LE0001&#x27;, &#x27;0912345678&#x27;),
+  (&#x27;LE0001&#x27;, &#x27;02811335577&#x27;),
+  (&#x27;LE0002&#x27;, &#x27;0987654321&#x27;),
+  (&#x27;LE0003&#x27;, &#x27;0909123456&#x27;),
+  (&#x27;LE0004&#x27;, &#x27;0938112244&#x27;),
+  (&#x27;LE0005&#x27;, &#x27;0977333444&#x27;);
+
+-- M:N Teach pairs (who teaches what).
+INSERT INTO Teach (CourseID, LecturerID) VALUES
+  (&#x27;IT079IU&#x27;, &#x27;LE0001&#x27;),
+  (&#x27;IT079IU&#x27;, &#x27;LE0002&#x27;),
+  (&#x27;IT003IU&#x27;, &#x27;LE0003&#x27;),
+  (&#x27;IT005IU&#x27;, &#x27;LE0003&#x27;),
+  (&#x27;IT005IU&#x27;, &#x27;LE0004&#x27;),
+  (&#x27;IT012IU&#x27;, &#x27;LE0004&#x27;),
+  (&#x27;IT045IU&#x27;, &#x27;LE0005&#x27;),
+  (&#x27;IT045IU&#x27;, &#x27;LE0006&#x27;);
+
+-- 14 registrations (requirement: at least 12).
+-- Registration 7 has Grade = NULL: registered, grade not yet assigned.
+INSERT INTO Register (StudentID, CourseID, Grade) VALUES
+  (&#x27;ITITIU1001&#x27;, &#x27;IT079IU&#x27;, 85.50),
+  (&#x27;ITITIU1001&#x27;, &#x27;IT045IU&#x27;, 91.25),
+  (&#x27;ITITIU1002&#x27;, &#x27;IT079IU&#x27;, 72.00),
+  (&#x27;ITITIU1002&#x27;, &#x27;IT003IU&#x27;, 68.50),
+  (&#x27;ITITIU1003&#x27;, &#x27;IT079IU&#x27;, 90.00),
+  (&#x27;ITITIU1003&#x27;, &#x27;IT005IU&#x27;, 88.25),
+  (&#x27;ITITIU1004&#x27;, &#x27;IT079IU&#x27;, NULL),
+  (&#x27;ITITIU1004&#x27;, &#x27;IT012IU&#x27;, 76.75),
+  (&#x27;ITITIU1005&#x27;, &#x27;IT079IU&#x27;, 64.00),
+  (&#x27;ITITIU1005&#x27;, &#x27;IT045IU&#x27;, 81.50),
+  (&#x27;ITITIU1006&#x27;, &#x27;IT003IU&#x27;, 55.25),
+  (&#x27;ITITIU1006&#x27;, &#x27;IT079IU&#x27;, 93.00),
+  (&#x27;ITITIU1007&#x27;, &#x27;IT079IU&#x27;, 49.00),
+  (&#x27;ITITIU1008&#x27;, &#x27;IT079IU&#x27;, 78.00);
+
+
+-- ----------------------------------------------------------------------------
+-- PART B.7 - THREE SELECTs THAT PROVE THE DATA IS THERE
+-- (the second one joins two tables)
+-- ----------------------------------------------------------------------------
+
+-- 1) Table Course, including the ALTERed Credits column:
+SELECT CourseID, CourseName, Credits
+FROM Course
+ORDER BY CourseID;
+
+-- 2) Joins two tables (Student and Register), with grade NULL shown as NULL:
+SELECT s.StudentID, s.StudentName, r.CourseID, r.Grade
+FROM Student s
+JOIN Register r ON r.StudentID = s.StudentID
+ORDER BY s.StudentID, r.CourseID;
+
+-- 3) Table LecturerPhone: multivalued attribute is now rows, not columns:
+SELECT LecturerID, Phone
+FROM LecturerPhone
+ORDER BY LecturerID, Phone;
+
+-- End of create_coursemanagement.sql
+</pre>
+
+<p>AI use: Claude/OpenCode assisted with script authoring, testing, and documentation.</p>
+</body></html>
