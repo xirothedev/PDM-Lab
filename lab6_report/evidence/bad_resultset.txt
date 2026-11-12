@@ -1,0 +1,2 @@
+SQLException: Operation not allowed after ResultSet closed
+SQLState: S1000 ErrorCode: 0

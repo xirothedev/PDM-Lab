@@ -1,0 +1,8 @@
+ERROR: already enrolled in this course
+ERROR: already enrolled in this course
+ERROR: instructors cannot enroll in courses
+Course Report for CourseID 1:
+ Hoang Van Em         | 2024-09-09   | N/A
+ Le Van Cuong         | 2024-09-07   | 5.0
+ Nguyen Van An        | 2024-09-05   | 8.5
+ Tran Thi Bich        | 2024-09-05   | 9.0

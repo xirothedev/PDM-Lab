@@ -1,0 +1,2 @@
+Connected successfully!
+MySQL version: 8.4.11

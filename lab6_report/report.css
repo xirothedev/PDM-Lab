@@ -1,0 +1,192 @@
+/* Print styling for the Lab 6 report (basic, low-color). */
+
+@page {
+  size: A4;
+  margin: 22mm 20mm 20mm 20mm;
+}
+
+html {
+  font-size: 11pt;
+}
+
+body {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  line-height: 1.5;
+  color: #000;
+  max-width: 46em;
+  margin: 0 auto;
+  padding: 0 1em;
+}
+
+/* Title page */
+header#title-block-header {
+  text-align: center;
+  margin-top: 22vh;
+  margin-bottom: 2.5em;
+  page-break-after: always;
+}
+
+header#title-block-header h1.title {
+  font-size: 24pt;
+  line-height: 1.2;
+  margin-bottom: 0.4em;
+  border: none;
+}
+
+header#title-block-header p.subtitle,
+header#title-block-header p.author,
+header#title-block-header p.date {
+  font-size: 11pt;
+  margin: 0.2em 0;
+}
+
+/* Headings */
+h1, h2, h3, h4 {
+  font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.25;
+  page-break-after: avoid;
+  color: #000;
+}
+
+h1 {
+  font-size: 16pt;
+  border-bottom: 1px solid #000;
+  padding-bottom: 0.25em;
+  margin-top: 1.6em;
+}
+
+h2 {
+  font-size: 13.5pt;
+  margin-top: 1.4em;
+}
+
+h3 {
+  font-size: 11.5pt;
+  margin-top: 1.2em;
+}
+
+h4 {
+  font-size: 10.5pt;
+  margin-top: 1em;
+}
+
+/* Body */
+p {
+  margin: 0.6em 0;
+}
+
+strong {
+  color: #000;
+}
+
+em {
+  color: #000;
+}
+
+a {
+  color: #000;
+  text-decoration: underline;
+}
+
+/* Code */
+code {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  background: #f2f2f2;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+pre {
+  background: #f2f2f2;
+  border: 1px solid #ccc;
+  border-left: 3px solid #888;
+  border-radius: 4px;
+  padding: 0.7em 0.9em;
+  overflow-x: auto;
+  font-size: 8.6pt;
+  line-height: 1.42;
+  page-break-inside: avoid;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+div.sourceCode {
+  margin: 0.9em 0;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.9em 0;
+  font-size: 9pt;
+  page-break-inside: avoid;
+}
+
+thead {
+  background: #e6e6e6;
+}
+
+th, td {
+  border: 1px solid #999;
+  padding: 0.35em 0.55em;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-size: 8.6pt;
+}
+
+tbody tr:nth-child(even) {
+  background: #f5f5f5;
+}
+
+/* Blockquotes */
+blockquote {
+  margin: 0.9em 0;
+  padding: 0.5em 0.9em;
+  border-left: 3px solid #888;
+  background: #f2f2f2;
+  color: #000;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #999;
+  margin: 1.8em 0;
+}
+
+#contents {
+  page-break-after: avoid;
+}
+
+#contents + ul {
+  page-break-after: always;
+  margin-top: 0.4em;
+}
+
+#contents + ul ul {
+  list-style: none;
+  padding-left: 1.6em;
+  font-size: 10pt;
+}
+
+#contents + ul > li {
+  margin: 0.18em 0;
+}
+
+#contents + ul strong {
+  margin-right: 0.3em;
+}
+
+nav#TOC {
+  page-break-after: always;
+}

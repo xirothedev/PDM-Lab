@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.13" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Le Thanh Trung - ITCSIU25055 - Lab 6" />
+  <title>IT079IU - Principles of Database Management - Lab 6</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <link rel="stylesheet" href="report.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">IT079IU - Principles of Database Management - Lab
+6</h1>
+<p class="subtitle">Java + MySQL: Connect, Query &amp; Stay Safe</p>
+<p class="author">Le Thanh Trung - ITCSIU25055 - Lab 6</p>
+<p class="date">November 2026</p>
+</header>
+<p><strong>Course</strong> IT079IU — Principles of Database
+Management<br />
+<strong>Lab</strong> 6 of 10<br />
+<strong>Student</strong> Le Thanh Trung · <strong>Student ID</strong>
+ITCSIU25055<br />
+<strong>Database</strong> EduConnect — <code>educonnect</code> on MySQL
+8.4 (port 33306)<br />
+<strong>JDK</strong> Temurin OpenJDK 25.0.2 · <strong>Driver</strong>
+MySQL Connector/J 8.4.0 · <strong>Build</strong> Maven 3.10</p>
+<p>Every demonstration in this report was executed against the running
+EduConnect database. Captured output is in <code>evidence/</code>, the
+Java source is in <code>project/src/main/java/educonnect/</code>, and
+the supporting SQL is in <code>src/</code>.</p>
+<hr />
+<h2 class="unnumbered" id="contents">Contents</h2>
+<ul>
+<li><strong>1</strong> Objective</li>
+<li><strong>2</strong> Environment and database setup</li>
+<li><strong>3</strong> Exercise 1 — Fix the broken code
+<ul>
+<li>3.1 Task 1.1 — Issues in <code>BrokenQueryRunner</code></li>
+<li>3.2 Task 1.2 — <code>SafeQueryRunner</code></li>
+<li>3.3 Task 1.3 — Connection leak demonstration</li>
+</ul></li>
+<li><strong>4</strong> Exercise 2 — Query runner application
+<ul>
+<li>4.1 Task 2.1 — Swing UI and <code>SwingWorker</code></li>
+<li>4.2 Task 2.2 — Parameterised search with <code>LIKE</code></li>
+<li>4.3 Task 2.3 — <code>ResultSet</code> after connection close</li>
+</ul></li>
+<li><strong>5</strong> Exercise 3 — Security and edge cases
+<ul>
+<li>5.1 Task 3.1 — Full SQL injection demonstration</li>
+<li>5.2 Task 3.2 — Calling <code>EnrollStudent</code> via
+<code>CallableStatement</code></li>
+<li>5.3 Task 3.3 — <code>GetCourseReport</code> and multiple result
+sets</li>
+</ul></li>
+<li><strong>6</strong> Part 8 — Thinking questions</li>
+<li><strong>7</strong> Part 7 checklist</li>
+<li><strong>8</strong> Reflection</li>
+<li><strong>Appendix A</strong> Contents of the submission bundle</li>
+</ul>
+<hr />
+<h2 data-number="1" id="objective"><span class="header-section-number">1</span> 1. Objective</h2>
+<p>This lab connects the EduConnect database to a real Java application
+through JDBC. The work covers the full lifecycle: opening a connection,
+running queries safely, reading a <code>ResultSet</code>, and closing
+resources in the right order. The emphasis is on what goes wrong in
+production: SQL injection, connection leaks, <code>ResultSet</code>
+misuse, and a frozen Swing UI. Three exercises move from fixing a
+deliberately broken class, through a Swing query runner, to security and
+edge-case demonstrations.</p>
+<hr />
+<h2 data-number="2" id="environment-and-database-setup"><span class="header-section-number">2</span> 2. Environment and database
+setup</h2>
+<p>The database and seed data are reused from Lab 4 (8 users, 5 courses,
+11 enrolments, 5 lessons, 9 attendance rows). Lab 6 needs three objects
+that did not exist, so <code>src/00_db_objects.sql</code> creates
+them:</p>
+<ul>
+<li><code>StudentProgressReport</code> view — per-student enrolment
+count and average grade.</li>
+<li><code>EnrollStudent(userID, courseID, OUT message)</code> —
+validates and inserts an enrolment.</li>
+<li><code>GetCourseReport(courseID)</code> — returns
+<code>FullName</code>, <code>EnrollDate</code>,
+<code>GradeDisplay</code>.</li>
+</ul>
+<p>MySQL runs in Docker on host port 33306 with credentials
+<code>root</code>/<code>root</code>. The connection URL used throughout
+is:</p>
+<pre><code>jdbc:mysql://localhost:33306/educonnect?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</code></pre>
+<p><code>allowPublicKeyRetrieval=true</code> is required because MySQL
+8.4 uses <code>caching_sha2_password</code> and the lab connection is
+not over TLS; it does not change the security model of the lab, only
+allows the initial key exchange.</p>
+<hr />
+<h2 data-number="3" id="exercise-1-fix-the-broken-code"><span class="header-section-number">3</span> 3. Exercise 1 — Fix the broken
+code</h2>
+<h3 data-number="3.1" id="task-1.1-issues-in-brokenqueryrunner"><span class="header-section-number">3.1</span> 3.1 Task 1.1 — Issues in
+<code>BrokenQueryRunner</code></h3>
+<p><code>BrokenQueryRunner</code> (Part 4.3 of the handout) contains at
+least six distinct issues:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>Issue</th>
+<th>Why it matters in production</th>
+<th>Lines</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SQL injection via string concatenation
+(<code>&#39; + nameInput + &#39;</code>)</td>
+<td>A malicious input such as <code>&#39; OR &#39;1&#39;=&#39;1</code> returns every
+user; <code>&#39;; DROP TABLE Users; --</code> destroys data</td>
+<td>6-7</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>Connection</code>, <code>Statement</code>,
+<code>ResultSet</code> never closed</td>
+<td>Each call leaks a socket and a server-side cursor; 151 leaks exhaust
+MySQL</td>
+<td>9-11</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>Statement</code> instead of
+<code>PreparedStatement</code></td>
+<td>No parameter binding, so injection is possible and the plan cannot
+be reused</td>
+<td>10</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Column access by index (<code>getInt(1)</code>,
+<code>getString(2)</code>, <code>getString(3)</code>)</td>
+<td>Breaks silently if the <code>SELECT</code> column order changes</td>
+<td>13-15</td>
+</tr>
+<tr>
+<td>5</td>
+<td>No <code>rs.next()</code> check before reading</td>
+<td>Throws <code>SQLException</code> (“ResultSet not positioned on a
+row”) on empty result</td>
+<td>13</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>catch (SQLException e) { e.printStackTrace(); }</code></td>
+<td>Stack trace leaks to stdout/stderr; the caller never learns the
+query failed</td>
+<td>17-18</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>Connection</code> created outside try-with-resources</td>
+<td>Even on exception the connection stays open</td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="3.2" id="task-1.2-safequeryrunner"><span class="header-section-number">3.2</span> 3.2 Task 1.2 —
+<code>SafeQueryRunner</code></h3>
+<p>Rewritten version using <code>PreparedStatement</code>,
+try-with-resources, column names, and a
+<code>List&lt;String[]&gt;</code> return:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">[]&gt;</span> <span class="fu">searchStudentByName</span><span class="op">(</span><span class="bu">String</span> nameInput<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">[]&gt;</span> results <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">String</span> sql <span class="op">=</span> <span class="st">&quot;SELECT UserID, FullName, Email FROM Users &quot;</span> <span class="op">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;WHERE Role = &#39;student&#39; AND FullName = ?&quot;</span><span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="op">(</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Connection</span> conn <span class="op">=</span> DBConnection<span class="op">.</span><span class="fu">getConnection</span><span class="op">();</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">PreparedStatement</span> ps <span class="op">=</span> conn<span class="op">.</span><span class="fu">prepareStatement</span><span class="op">(</span>sql<span class="op">)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        ps<span class="op">.</span><span class="fu">setString</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> nameInput<span class="op">);</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> <span class="op">(</span><span class="bu">ResultSet</span> rs <span class="op">=</span> ps<span class="op">.</span><span class="fu">executeQuery</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span> <span class="op">(</span>rs<span class="op">.</span><span class="fu">next</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                results<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="kw">new</span> <span class="bu">String</span><span class="op">[]</span> <span class="op">{</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">String</span><span class="op">.</span><span class="fu">valueOf</span><span class="op">(</span>rs<span class="op">.</span><span class="fu">getInt</span><span class="op">(</span><span class="st">&quot;UserID&quot;</span><span class="op">)),</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                    rs<span class="op">.</span><span class="fu">getString</span><span class="op">(</span><span class="st">&quot;FullName&quot;</span><span class="op">),</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                    rs<span class="op">.</span><span class="fu">getString</span><span class="op">(</span><span class="st">&quot;Email&quot;</span><span class="op">)</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                <span class="op">});</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">SQLException</span> e<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">RuntimeException</span><span class="op">(</span><span class="st">&quot;Query failed: &quot;</span> <span class="op">+</span> e<span class="op">.</span><span class="fu">getMessage</span><span class="op">(),</span> e<span class="op">);</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results<span class="op">;</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Test results (<code>evidence/safe_query.txt</code>):</p>
+<pre><code>normal size: 1
+inject size: 0
+1|Nguyen Van An|an.nguyen@edu.vn</code></pre>
+<p>A normal input returns one row; the injection attempt returns zero
+rows because the payload is treated as a literal string to match, not as
+SQL.</p>
+<p>Why <code>PreparedStatement</code> prevents the injection (protocol
+level): MySQL receives two separate messages. First, the SQL template
+<code>SELECT ... WHERE FullName = ?</code> is sent and parsed/prepared
+by the server. Second, the parameter value is sent as a typed data value
+in the binary protocol. The server never substitutes the value back into
+a SQL string, so the value is never re-parsed as SQL. Even
+<code>&#39; OR &#39;1&#39;=&#39;1</code> arrives as a single VARCHAR value and is
+compared against <code>FullName</code> literally.</p>
+<h3 data-number="3.3" id="task-1.3-connection-leak-demonstration"><span class="header-section-number">3.3</span> 3.3 Task 1.3 — Connection leak
+demonstration</h3>
+<p>A loop opened connections without closing them
+(<code>ConnectionLeakTest</code>). MySQL rejected the 153rd
+connection:</p>
+<pre><code>Opened connection 152
+Failed at connection 153: Data source rejected establishment of connection,
+  message from server: &quot;Too many connections&quot;
+SQLState: 08004 ErrorCode: 1040</code></pre>
+<p>(<code>evidence/connection_leak.txt</code>.)</p>
+<p>The Java exception is
+<code>java.sql.SQLNonTransientConnectionException</code> with error code
+1040 (“Too many connections”). MySQL’s default
+<code>max_connections</code> is 151; the extra headroom comes from the
+one reserved administrative connection.</p>
+<p>Math for a real web application: at one leaked connection per request
+and 1,000 requests/day, the default limit of 151 is exhausted after 151
+requests, i.e. on the first day (151 / 1000 = 0.151 days ≈ 3.6 hours).
+Even at 100 requests/day it takes 1.51 days. The fix is
+try-with-resources on every <code>Connection</code>,
+<code>Statement</code>, and <code>ResultSet</code>.</p>
+<hr />
+<h2 data-number="4" id="exercise-2-query-runner-application"><span class="header-section-number">4</span> 4. Exercise 2 — Query runner
+application</h2>
+<h3 data-number="4.1" id="task-2.1-swing-ui-and-swingworker"><span class="header-section-number">4.1</span> 4.1 Task 2.1 — Swing UI and
+<code>SwingWorker</code></h3>
+<p><code>MainFrame</code> builds the UI from Part 4.5.2: a SQL text
+field, an Execute button, a <code>JTable</code> in a
+<code>JScrollPane</code>, and a status label. The query runs inside a
+<code>SwingWorker</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">SwingWorker</span><span class="op">&lt;</span><span class="bu">Void</span><span class="op">,</span> <span class="bu">Void</span><span class="op">&gt;</span> worker <span class="op">=</span> <span class="kw">new</span> <span class="bu">SwingWorker</span><span class="op">&lt;&gt;()</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="bu">Void</span> <span class="fu">doInBackground</span><span class="op">()</span> <span class="kw">throws</span> <span class="bu">Exception</span> <span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">// DB work here, on a background thread</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">...</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">done</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        btnExecute<span class="op">.</span><span class="fu">setEnabled</span><span class="op">(</span><span class="kw">true</span><span class="op">);</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        lblStatus<span class="op">.</span><span class="fu">setText</span><span class="op">(</span><span class="st">&quot;Done&quot;</span><span class="op">);</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>worker<span class="op">.</span><span class="fu">execute</span><span class="op">();</span></span></code></pre></div>
+<p>The Execute button is disabled before <code>execute()</code> and
+re-enabled in <code>done()</code>, so a slow query cannot be
+double-submitted.</p>
+<p>Why <code>SwingWorker</code> is necessary: Swing has a single Event
+Dispatch Thread (EDT) that repaints the window and processes clicks.
+Running <code>DBConnection.getConnection()</code> on the EDT blocks
+repaints, so the window freezes and appears crashed.
+<code>doInBackground()</code> runs on a worker thread;
+<code>done()</code> runs back on the EDT and is the only place that may
+touch Swing components. Temporarily removing <code>SwingWorker</code>
+and running <code>SELECT SLEEP(3)</code> freezes the window for three
+seconds and proves the point.</p>
+<h3 data-number="4.2" id="task-2.2-parameterised-search-with-like"><span class="header-section-number">4.2</span> 4.2 Task 2.2 — Parameterised
+search with <code>LIKE</code></h3>
+<p>A separate panel searches <code>StudentProgressReport</code> by
+partial name. The pattern is built in Java and bound as a parameter:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> pattern <span class="op">=</span> <span class="st">&quot;%&quot;</span> <span class="op">+</span> nameInput <span class="op">+</span> <span class="st">&quot;%&quot;</span><span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ps<span class="op">.</span><span class="fu">setString</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> pattern<span class="op">);</span>   <span class="co">// safe: pattern is the parameter value, not SQL</span></span></code></pre></div>
+<p>SQL: <code>WHERE StudentName LIKE ?</code>.</p>
+<p>Is this safe from SQL injection? Yes. The <code>?</code> placeholder
+is bound as a data value; MySQL receives the template
+<code>... LIKE ?</code> and the value <code>%Van%</code> as two separate
+messages. Building the <code>%</code> in Java does not create a
+vulnerability because the <code>%</code> characters become part of the
+parameter value, not of the SQL text. The only thing that would be
+unsafe is concatenating <code>nameInput</code> (or the <code>%</code>)
+into the SQL string.</p>
+<p>Sample result (<code>evidence/student_search.txt</code>):</p>
+<pre><code>Nguyen Van An|3|7.75
+Le Van Cuong|3|5.0
+Hoang Van Em|2|6.0</code></pre>
+<h3 data-number="4.3" id="task-2.3-resultset-after-connection-close"><span class="header-section-number">4.3</span> 4.3 Task 2.3 —
+<code>ResultSet</code> after connection close</h3>
+<p><code>StudentDAO.getBadResultSet()</code> closes the connection
+before returning the <code>ResultSet</code>. Using it throws:</p>
+<pre><code>SQLException: Operation not allowed after ResultSet closed
+SQLState: S1000 ErrorCode: 0</code></pre>
+<p>(<code>evidence/bad_resultset.txt</code>.)</p>
+<p>Why closing <code>conn</code> invalidates <code>rs</code>: a
+<code>ResultSet</code> is a cursor backed by the underlying
+<code>Statement</code> and <code>Connection</code> (socket + server-side
+cursor). Closing the <code>Connection</code> closes the socket, which
+closes the <code>Statement</code>, which closes the
+<code>ResultSet</code>. Any later <code>rs.next()</code> or
+<code>rs.getString()</code> fails.</p>
+<p>Returning a <code>ResultSet</code> from a method is a design mistake
+because the caller must keep the <code>Connection</code> open to use it,
+which leaks the connection lifecycle into the caller. The correct
+pattern is to process the <code>ResultSet</code> inside the method and
+return a <code>List&lt;String[]&gt;</code> (or a domain object). This is
+the Data Access Object (DAO) pattern.</p>
+<p>Trade-offs: returning the full list materialises all rows in RAM,
+which is simple and lets the caller use the data freely, but does not
+scale to millions of rows. Streaming with
+<code>ps.setFetchSize(Integer.MIN_VALUE)</code> in MySQL Connector/J
+keeps one row in memory at a time but requires the
+<code>ResultSet</code> to stay open for the whole iteration and blocks
+the connection until consumption finishes.</p>
+<hr />
+<h2 data-number="5" id="exercise-3-security-and-edge-cases"><span class="header-section-number">5</span> 5. Exercise 3 — Security and edge
+cases</h2>
+<h3 data-number="5.1" id="task-3.1-full-sql-injection-demonstration"><span class="header-section-number">5.1</span> 5.1 Task 3.1 — Full SQL
+injection demonstration</h3>
+<p>A temporary <code>vulnerableSearch</code> using
+<code>Statement</code> and concatenation was run with four inputs.
+Results (<code>evidence/injection_demo.txt</code>):</p>
+<pre><code>=== Results for input: Nguyen Van An ===
+1 | Nguyen Van An
+=== End ===
+=== Results for input: &#39; OR &#39;1&#39;=&#39;1&#39; --  ===
+1 | Nguyen Van An
+2 | Tran Thi Bich
+3 | Le Van Cuong
+4 | Pham Thi Dung
+5 | Hoang Van Em
+6 | Dr. Minh Tuan
+7 | Dr. Lan Anh
+8 | Dr. Thanh Hung
+=== End ===
+=== Results for input: &#39; OR UserID &gt; 3 --  ===
+4 | Pham Thi Dung
+5 | Hoang Van Em
+6 | Dr. Minh Tuan
+7 | Dr. Lan Anh
+8 | Dr. Thanh Hung
+=== End ===
+=== Results for input: Nguyen&#39; --  ===
+=== End ===</code></pre>
+<p>The first payload closes the string literal (<code>&#39;</code>), injects
+an always-true condition (<code>OR &#39;1&#39;=&#39;1&#39;</code>), and comments out the
+rest (<code>--</code>). MySQL receives:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> UserID, FullName, <span class="kw">Role</span> <span class="kw">FROM</span> Users <span class="kw">WHERE</span> FullName <span class="op">=</span> <span class="st">&#39;&#39;</span> <span class="kw">OR</span> <span class="st">&#39;1&#39;</span><span class="op">=</span><span class="st">&#39;1&#39;</span> <span class="co">-- &#39;</span></span></code></pre></div>
+<p>With <code>PreparedStatement</code> and the same input, MySQL
+receives the template</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> UserID, FullName, <span class="kw">Role</span> <span class="kw">FROM</span> Users <span class="kw">WHERE</span> FullName <span class="op">=</span> ?</span></code></pre></div>
+<p>and the value</p>
+<pre><code>&#39; OR &#39;1&#39;=&#39;1&#39; --</code></pre>
+<p>as a separate data message. The value is compared against
+<code>FullName</code> literally and matches no row, so the result is 0
+rows. The two cases are fundamentally different: in the vulnerable
+version the input becomes part of the SQL text; in the safe version the
+input is data that the server never interprets as SQL.</p>
+<p>The method was then deleted and replaced by the
+<code>PreparedStatement</code> version; the same payloads return 0
+results.</p>
+<h3 data-number="5.2" id="task-3.2-calling-enrollstudent-via-callablestatement"><span class="header-section-number">5.2</span> 5.2 Task 3.2 — Calling
+<code>EnrollStudent</code> via <code>CallableStatement</code></h3>
+<p><code>EnrollService.enrollStudentFromJava</code> calls the procedure
+with an OUT parameter:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">CallableStatement</span> cs <span class="op">=</span> conn<span class="op">.</span><span class="fu">prepareCall</span><span class="op">(</span><span class="st">&quot;CALL EnrollStudent(?, ?, ?)&quot;</span><span class="op">);</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>cs<span class="op">.</span><span class="fu">setInt</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> userID<span class="op">);</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>cs<span class="op">.</span><span class="fu">setInt</span><span class="op">(</span><span class="dv">2</span><span class="op">,</span> courseID<span class="op">);</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>cs<span class="op">.</span><span class="fu">registerOutParameter</span><span class="op">(</span><span class="dv">3</span><span class="op">,</span> java<span class="op">.</span><span class="fu">sql</span><span class="op">.</span><span class="fu">Types</span><span class="op">.</span><span class="fu">VARCHAR</span><span class="op">);</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>cs<span class="op">.</span><span class="fu">execute</span><span class="op">();</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> cs<span class="op">.</span><span class="fu">getString</span><span class="op">(</span><span class="dv">3</span><span class="op">);</span></span></code></pre></div>
+<p>Test results (<code>evidence/enroll_and_report.txt</code>):</p>
+<pre><code>Enrolled successfully (EnrollID=12)
+ERROR: already enrolled in this course
+ERROR: instructors cannot enroll in courses</code></pre>
+<p><code>registerOutParameter</code> declares the SQL type of the OUT
+parameter before <code>execute()</code>, so the driver allocates a slot
+to receive the value the procedure sets. If it is omitted,
+<code>cs.getString(3)</code> throws <code>SQLException</code>
+(“Parameter not registered as output parameter”) because the driver does
+not know that position 3 is an output.</p>
+<p>A UI panel with UserID/CourseID fields and an Enroll button was added
+to <code>MainFrame</code> (the search/enrol panels); the button calls
+this method and shows the returned message in a dialog.</p>
+<h3 data-number="5.3" id="task-3.3-getcoursereport-and-multiple-result-sets"><span class="header-section-number">5.3</span> 5.3 Task 3.3 —
+<code>GetCourseReport</code> and multiple result sets</h3>
+<p><code>EnrollService.getCourseReportFromJava</code> calls
+<code>CALL GetCourseReport(?)</code> and reads the first
+<code>ResultSet</code>:</p>
+<pre><code>Course Report for CourseID 1:
+ Hoang Van Em         | 2024-09-09   | N/A
+ Le Van Cuong         | 2024-09-07   | 5.0
+ Nguyen Van An        | 2024-09-05   | 8.5
+ Tran Thi Bich        | 2024-09-05   | 9.0</code></pre>
+<p><code>cs.execute()</code> returns <code>true</code> when the first
+result is a <code>ResultSet</code> and <code>false</code> when it is an
+update count. A procedure that runs both <code>UPDATE</code> and
+<code>SELECT</code> produces multiple results; the Java code must call
+<code>cs.getMoreResults()</code> (and <code>cs.getUpdateCount()</code>)
+in a loop to consume them all. A stored procedure returns multiple
+result sets when it contains several <code>SELECT</code> statements,
+e.g. a report procedure that returns a summary row set followed by a
+detail row set. The handling loop is:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> hasResult <span class="op">=</span> cs<span class="op">.</span><span class="fu">execute</span><span class="op">();</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span><span class="kw">true</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>hasResult<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> <span class="op">(</span><span class="bu">ResultSet</span> rs <span class="op">=</span> cs<span class="op">.</span><span class="fu">getResultSet</span><span class="op">())</span> <span class="op">{</span> <span class="co">/* read rows */</span> <span class="op">}</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>cs<span class="op">.</span><span class="fu">getUpdateCount</span><span class="op">()</span> <span class="op">==</span> <span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span> <span class="co">// no more results</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    hasResult <span class="op">=</span> cs<span class="op">.</span><span class="fu">getMoreResults</span><span class="op">();</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 data-number="6" id="part-8-thinking-questions"><span class="header-section-number">6</span> 6. Part 8 — Thinking
+questions</h2>
+<p><strong>Q1. Manual sanitisation vs
+<code>PreparedStatement</code>.</strong> Escaping quotes by hand is
+always inferior because the set of dangerous characters depends on the
+database, the column type, the connection charset, and the SQL context
+(string literal vs identifier vs numeric). One edge case where manual
+sanitisation fails: an input containing a backslash in a MySQL string
+literal with <code>NO_BACKSLASH_ESCAPES</code> disabled changes how the
+following quote is interpreted; another is a multi-byte character whose
+trailing byte is <code>0x27</code> (a quote) in a charset such as GBK,
+which bypasses <code>addslashes</code>-style escaping.
+<code>PreparedStatement</code> avoids all of this by never putting the
+value into SQL text.</p>
+<p><strong>Q2. HikariCP and connection pools.</strong> HikariCP is a
+high-performance JDBC connection pool. With a pool,
+<code>getConnection()</code> no longer opens a socket: it borrows a
+pre-opened connection from the pool (waiting if none is free).
+<code>conn.close()</code> no longer closes the socket: it returns the
+connection to the pool. The application code keeps the same try-with-
+resources shape; only the <code>DataSource</code> configuration
+changes.</p>
+<p><strong>Q3. DAO pattern.</strong> A separate DAO layer keeps SQL out
+of the UI event handler, so the UI stays testable and the SQL stays in
+one place. If EduConnect migrates from MySQL to PostgreSQL, the SQL
+dialect (date functions, <code>LIMIT</code>, identifiers) changes inside
+the DAO, while the method signatures and the UI stay the same.</p>
+<p><strong>Q4. Stored procedure vs JDBC ownership.</strong> The lab
+splits validation: enrolment validation lives in the stored procedure,
+student name lookup in Java. This is not fully consistent. With a team
+of five (half DB, half Java), enrolment validation should live in the
+database, because it must be atomic with the insert and must hold under
+concurrent calls from any client. The risk is that the DB team changes
+the procedure’s contract (message text, parameters) without telling the
+Java team, breaking the caller. Mitigation: version the procedure,
+document the contract, and add integration tests that call it.</p>
+<p><strong>Q5. <code>ResultSet</code> streaming.</strong>
+<code>ps.setFetchSize(Integer.MIN_VALUE)</code> in MySQL Connector/J
+switches the driver to row-by-row streaming instead of loading the whole
+result set into memory. The new constraint is that the
+<code>ResultSet</code> (and its
+<code>Statement</code>/<code>Connection</code>) must stay open and be
+consumed sequentially; you cannot issue another query on the same
+connection until streaming finishes, and you cannot scroll backwards.
+Choose streaming for very large result sets (reports, exports); choose
+loading into a <code>List</code> for small interactive results.</p>
+<p><strong>Q6. Concurrent enrollment.</strong> The race happens because
+the check and the insert are not atomic. The database mechanism that
+prevents it is a transaction with row-level locking:
+<code>SELECT ... FOR UPDATE</code> on the course row inside a
+transaction serialises the check-and-insert. Alternatively, a unique
+constraint on <code>(UserID, CourseID)</code> plus an insert that fails
+on duplicate, or an atomic <code>INSERT ... SELECT</code> guarded by the
+course’s capacity. The stored procedure should be rewritten to run in a
+transaction with
+<code>SELECT CurrentCount FROM Courses WHERE CourseID = ? FOR UPDATE</code>,
+check capacity, then insert, committing only if the check passes.</p>
+<hr />
+<h2 data-number="7" id="part-7-checklist"><span class="header-section-number">7</span> 7. Part 7 checklist</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked></input>NetBeans project created
+with correct structure (Maven project instead, JDK 25)</label></li>
+<li><label><input type="checkbox" checked></input>MySQL Connector/J JAR
+added to Libraries (pom.xml dependency)</label></li>
+<li><label><input type="checkbox" checked></input><code>ConnectionTest</code> runs successfully and prints
+MySQL version</label></li>
+<li><label><input type="checkbox" checked></input>Task 1.1: at least 6
+issues identified in <code>BrokenQueryRunner</code></label></li>
+<li><label><input type="checkbox" checked></input>Task 1.2:
+<code>SafeQueryRunner</code> with <code>PreparedStatement</code>,
+try-with-resources, column names</label></li>
+<li><label><input type="checkbox" checked></input>Task 1.2: normal input
+returns 1, injection attempt returns 0</label></li>
+<li><label><input type="checkbox" checked></input>Task 1.2: protocol-level
+explanation written</label></li>
+<li><label><input type="checkbox" checked></input>Task 1.3: connection leak
+demonstrated; MySQL error 1040 documented</label></li>
+<li><label><input type="checkbox" checked></input>Task 1.3: max-connections
+math calculated</label></li>
+<li><label><input type="checkbox" checked></input>Task 2.1:
+<code>MainFrame</code> runs; both test queries display in
+<code>JTable</code></label></li>
+<li><label><input type="checkbox" checked></input>Task 2.1: button disables
+during query and re-enables after</label></li>
+<li><label><input type="checkbox" checked></input>Task 2.1:
+<code>SwingWorker</code> necessity explained</label></li>
+<li><label><input type="checkbox" checked></input>Task 2.2: parameterised
+search with <code>PreparedStatement</code> and
+<code>LIKE</code></label></li>
+<li><label><input type="checkbox" checked></input>Task 2.2:
+<code>LIKE</code> safety explanation written</label></li>
+<li><label><input type="checkbox" checked></input>Task 2.3: bad
+<code>ResultSet</code> exception observed and documented</label></li>
+<li><label><input type="checkbox" checked></input>Task 2.3: rewritten
+method returns <code>List</code> instead of
+<code>ResultSet</code></label></li>
+<li><label><input type="checkbox" checked></input>Task 3.1: injection
+payloads tested; SQL drawn out</label></li>
+<li><label><input type="checkbox" checked></input>Task 3.1:
+<code>PreparedStatement</code> version returns 0 results</label></li>
+<li><label><input type="checkbox" checked></input>Task 3.2:
+<code>EnrollStudent</code> called via <code>CallableStatement</code>;
+all 3 test cases pass</label></li>
+<li><label><input type="checkbox" checked></input>Task 3.2:
+<code>registerOutParameter</code> explained</label></li>
+<li><label><input type="checkbox" checked></input>Task 3.3:
+<code>GetCourseReport</code> called; <code>ResultSet</code> read
+correctly</label></li>
+<li><label><input type="checkbox" checked></input>No raw
+<code>Statement</code> used except the Task 3.1
+demonstration</label></li>
+<li><label><input type="checkbox" checked></input>All
+<code>Connection</code>, <code>PreparedStatement</code>,
+<code>ResultSet</code> use try-with-resources</label></li>
+<li><label><input type="checkbox" checked></input>No column index access in
+final code</label></li>
+</ul>
+<hr />
+<h2 data-number="8" id="reflection"><span class="header-section-number">8</span> 8. Reflection</h2>
+<p>The most surprising part of this lab was how little code separates a
+safe query from a catastrophic one: a single <code>+</code> in a string
+is the difference between a parameter and an injection. Seeing the
+payloads return the entire <code>Users</code> table made the risk
+concrete. The connection-leak demonstration was equally sobering — 152
+unclosed connections took down the server in under a second. The two
+habits I will carry forward are: never concatenate user input into SQL,
+and always close resources with try-with-resources, even on the happy
+path.</p>
+<hr />
+<h2 data-number="9" id="appendix-a-contents-of-the-submission-bundle"><span class="header-section-number">9</span> Appendix A — Contents of the
+submission bundle</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PDMLab6_ITCSIU25055_LeThanhTrung.pdf</code></td>
+<td>this report</td>
+</tr>
+<tr>
+<td><code>PDMLab6_ITCSIU25055.docx</code></td>
+<td>editable copy</td>
+</tr>
+<tr>
+<td><code>project/pom.xml</code></td>
+<td>Maven build with Connector/J 8.4.0</td>
+</tr>
+<tr>
+<td><code>project/src/main/java/educonnect/*.java</code></td>
+<td>all Java classes</td>
+</tr>
+<tr>
+<td><code>src/00_db_objects.sql</code></td>
+<td>view + stored procedures</td>
+</tr>
+<tr>
+<td><code>evidence/*.txt</code></td>
+<td>captured output of every demonstration</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>how to build and run</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
