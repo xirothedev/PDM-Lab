@@ -1,0 +1,14 @@
+================================================================
+Lab 4 - task1_1_student_roster
+MySQL 8.4.11 | database: educonnect | seed data as per handout Part 4.1
+================================================================
+
++---------------+------------------+
+| FullName      | Email            |
++---------------+------------------+
+| Hoang Van Em  | em.hoang@edu.vn  |
+| Le Van Cuong  | cuong.le@edu.vn  |
+| Nguyen Van An | an.nguyen@edu.vn |
+| Pham Thi Dung | dung.pham@edu.vn |
+| Tran Thi Bich | bich.tran@edu.vn |
++---------------+------------------+

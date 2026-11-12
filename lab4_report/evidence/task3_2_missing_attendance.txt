@@ -1,0 +1,50 @@
+================================================================
+Lab 4 - task3_2_missing_attendance
+MySQL 8.4.11 | database: educonnect | seed data as per handout Part 4.1
+================================================================
+
++---------------+-----------------------------+
+| StudentName   | CourseTitle                 |
++---------------+-----------------------------+
+| Hoang Van Em  | Introduction to Programming |
+| Nguyen Van An | Calculus I                  |
+| Pham Thi Dung | Calculus I                  |
+| Tran Thi Bich | Database Management         |
++---------------+-----------------------------+
++---------------+-----------------------------+
+| StudentName   | CourseTitle                 |
++---------------+-----------------------------+
+| Hoang Van Em  | Introduction to Programming |
+| Nguyen Van An | Calculus I                  |
+| Pham Thi Dung | Calculus I                  |
+| Tran Thi Bich | Database Management         |
++---------------+-----------------------------+
++---------------+-----------------------------+
+| StudentName   | CourseTitle                 |
++---------------+-----------------------------+
+| Hoang Van Em  | Introduction to Programming |
+| Le Van Cuong  | Introduction to Programming |
+| Nguyen Van An | Calculus I                  |
+| Pham Thi Dung | Calculus I                  |
+| Pham Thi Dung | Database Management         |
+| Tran Thi Bich | Database Management         |
++---------------+-----------------------------+
++---------------+-----------------------------+-----------------+-------------------+----------+
+| StudentName   | CourseTitle                 | LessonsInCourse | AttendanceRecords | Enrolled |
++---------------+-----------------------------+-----------------+-------------------+----------+
+| Hoang Van Em  | Introduction to Programming |               2 |                 0 |        2 |
+| Le Van Cuong  | Introduction to Programming |               2 |                 1 |        2 |
+| Nguyen Van An | Calculus I                  |               1 |                 0 |        1 |
+| Nguyen Van An | Database Management         |               2 |                 2 |        2 |
+| Nguyen Van An | Introduction to Programming |               2 |                 2 |        2 |
+| Pham Thi Dung | Calculus I                  |               1 |                 0 |        1 |
+| Pham Thi Dung | Database Management         |               2 |                 1 |        2 |
+| Tran Thi Bich | Database Management         |               2 |                 0 |        2 |
+| Tran Thi Bich | Introduction to Programming |               2 |                 2 |        2 |
++---------------+-----------------------------+-----------------+-------------------+----------+
++----------+-----------------+---------+
+| CourseID | Title           | Lessons |
++----------+-----------------+---------+
+|        4 | Data Structures |       0 |
+|        5 | Linear Algebra  |       0 |
++----------+-----------------+---------+

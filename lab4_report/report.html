@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.12.1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Le Thanh Trung - ITCSIU25055 - Lab 4" />
+  <title>IT079IU - Principles of Database Management - Lab 4</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">
+@page {
+size: A4;
+margin: 22mm 20mm 20mm 20mm;
+}
+html {
+font-size: 11pt;
+}
+body {
+font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+line-height: 1.5;
+color: #1a1a1a;
+max-width: 46em;
+margin: 0 auto;
+padding: 0 1em;
+}
+
+header#title-block-header {
+text-align: center;
+margin-top: 22vh;
+margin-bottom: 2.5em;
+page-break-after: always;
+}
+header#title-block-header h1.title {
+font-size: 24pt;
+line-height: 1.2;
+margin-bottom: 0.4em;
+border: none;
+}
+header#title-block-header p.subtitle {
+font-size: 13pt;
+color: #444;
+margin: 0.2em 0;
+}
+header#title-block-header p.author,
+header#title-block-header p.date {
+font-size: 11pt;
+color: #444;
+margin: 0.2em 0;
+}
+
+h1, h2, h3, h4 {
+font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+line-height: 1.25;
+page-break-after: avoid;
+}
+h1 {
+font-size: 16pt;
+border-bottom: 1px solid #ccc;
+padding-bottom: 0.25em;
+margin-top: 1.6em;
+}
+h2 {
+font-size: 13.5pt;
+margin-top: 1.4em;
+}
+h3 {
+font-size: 11.5pt;
+margin-top: 1.2em;
+color: #333;
+}
+h4 {
+font-size: 10.5pt;
+margin-top: 1em;
+color: #555;
+}
+
+p {
+margin: 0.6em 0;
+}
+strong {
+color: #000;
+}
+em {
+color: #333;
+}
+a {
+color: #14507d;
+text-decoration: none;
+}
+
+code {
+font-family: "SF Mono", Menlo, Consolas, monospace;
+font-size: 0.85em;
+background: #f4f4f5;
+padding: 0.1em 0.3em;
+border-radius: 3px;
+}
+pre {
+background: #f7f7f8;
+border: 1px solid #e3e3e5;
+border-left: 3px solid #b8c4d0;
+border-radius: 4px;
+padding: 0.7em 0.9em;
+overflow-x: auto;
+font-size: 8.6pt;
+line-height: 1.42;
+page-break-inside: avoid;
+}
+pre code {
+background: none;
+padding: 0;
+font-size: inherit;
+}
+div.sourceCode {
+margin: 0.9em 0;
+}
+
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 0.9em 0;
+font-size: 9pt;
+page-break-inside: avoid;
+}
+thead {
+background: #eef1f4;
+}
+th, td {
+border: 1px solid #ccd2d8;
+padding: 0.35em 0.55em;
+text-align: left;
+vertical-align: top;
+}
+th {
+font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-weight: 600;
+font-size: 8.6pt;
+}
+tbody tr:nth-child(even) {
+background: #fafafa;
+}
+
+blockquote {
+margin: 0.9em 0;
+padding: 0.5em 0.9em;
+border-left: 3px solid #d5dbe1;
+background: #f7f8f9;
+color: #333;
+}
+hr {
+border: none;
+border-top: 1px solid #d5dbe1;
+margin: 1.8em 0;
+}
+
+#contents {
+page-break-after: avoid;
+}
+#contents + ul {
+page-break-after: always;
+margin-top: 0.4em;
+}
+#contents + ul ul {
+list-style: none;
+padding-left: 1.6em;
+font-size: 10pt;
+}
+#contents + ul > li {
+margin: 0.18em 0;
+}
+#contents + ul strong {
+margin-right: 0.3em;
+}
+nav#TOC {
+page-break-after: always;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">IT079IU - Principles of Database Management - Lab
+4</h1>
+<p class="subtitle">SQL Fundamentals: Business Questions, Not Row
+Counts</p>
+<p class="author">Le Thanh Trung - ITCSIU25055 - Lab 4</p>
+<p class="date">October 2026</p>
+</header>
+<p><strong>Course</strong> IT079IU — Principles of Database
+Management<br />
+<strong>Lab</strong> 4 of 10<br />
+<strong>Student</strong> Le Thanh Trung · <strong>Student ID</strong>
+ITCSIU25055<br />
+<strong>Database</strong> EduConnect — <code>educonnect</code><br />
+<strong>Server</strong> MySQL 8.4.11, run in Docker; the SQL runs
+unchanged in MySQL Workbench or any other MySQL client</p>
+<p>Every query in this report was executed against the EduConnect
+database with the seed data from Part 4.1 of the handout. The captured
+output is in <code>evidence/</code>, the SQL is in
+<code>src/</code>.</p>
+<hr />
+<h2 class="unnumbered" id="contents">Contents</h2>
+<ul>
+<li><strong>1</strong> Objective</li>
+<li><strong>2</strong> Environment and database setup
+<ul>
+<li>2.1 The six tables</li>
+<li>2.2 Why <code>utf8mb4</code></li>
+<li>2.3 Why <code>Departments.ManagerID</code> allows NULL</li>
+<li>2.4 Verification</li>
+<li>2.5 The seed data is built to expose mistakes</li>
+</ul></li>
+<li><strong>3</strong> Results
+<ul>
+<li>3.1 Task 1.1 — Student roster</li>
+<li>3.2 Task 1.2 — Courses with their department</li>
+<li>3.3 Task 1.3 — Recent enrollments</li>
+<li>3.4 Task 2.1 — Enrolment count per course</li>
+<li>3.5 Task 2.2 — Average grade by course</li>
+<li>3.6 Task 2.3 — Students with multiple absences</li>
+<li>3.7 Task 3.1 — Students at risk</li>
+<li>3.8 Task 3.2 — The missing attendance problem</li>
+<li>3.9 Task 3.3 — EXPLAIN analysis</li>
+</ul></li>
+<li><strong>4</strong> Discussion — Part 8 thinking questions
+<ul>
+<li>4.1 Q1 — The NULL semantics trap</li>
+<li>4.2 Q2 — JOIN order and performance</li>
+<li>4.3 Q3 — HAVING versus a subquery</li>
+<li>4.4 Q4 — The “no attendance” problem</li>
+<li>4.5 Q5 — Scalability of GROUP BY</li>
+<li>4.6 Q6 — Business question versus SQL question</li>
+<li>4.7 Q7 — When LEFT JOIN breaks GROUP BY</li>
+</ul></li>
+<li><strong>5</strong> Common mistakes</li>
+<li><strong>6</strong> Part 7 checklist</li>
+<li><strong>7</strong> Reflection</li>
+<li><strong>Appendix A</strong> Contents of the submission bundle</li>
+</ul>
+<h2 data-number="1" id="objective"><span class="header-section-number">1</span> Objective</h2>
+<p>This lab moves from writing SQL that returns rows to writing SQL that
+answers a business question. The EduConnect database was built from
+scratch, and nine business questions were translated into queries. Every
+query was run against the seed data and its result inspected. The work
+covers the four ways real data breaks a query: NULL values, empty result
+sets, duplicate rows from an incorrectly scoped join, and a table large
+enough for an unindexed query to be slow. Three tasks return no rows on
+the seed data, and one of them has a trap that produces a plausible but
+wrong answer. The performance questions were answered by measurement: a
+second database with 100,000 users, 1,000,000 enrolments and 1,000,000
+attendance rows, with the candidate queries run under
+<code>EXPLAIN ANALYZE</code>.</p>
+<hr />
+<h2 data-number="2" id="environment-and-database-setup"><span class="header-section-number">2</span> Environment and database
+setup</h2>
+<h3 data-number="2.1" id="the-six-tables"><span class="header-section-number">2.1</span> The six tables</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Table</th>
+<th>Purpose</th>
+<th>Rows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Users</code></td>
+<td>People on the platform, <code>Role</code> = <code>student</code> or
+<code>instructor</code></td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>Departments</code></td>
+<td>Academic departments, each with a manager who may be NULL</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>Courses</code></td>
+<td>Courses, each belonging to a department and taught by an
+instructor</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>Enrollments</code></td>
+<td>Who enrolled in what, with a <code>Grade</code> that is NULL until
+it is set</td>
+<td>11</td>
+</tr>
+<tr>
+<td><code>Lessons</code></td>
+<td>Scheduled lessons belonging to a course</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>Attendance</code></td>
+<td>One row per student per lesson: <code>present</code>,
+<code>absent</code> or <code>late</code></td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+<p>The tables were created in the handout’s order, because
+<code>Departments</code> references <code>Users</code>,
+<code>Courses</code> references <code>Departments</code> and
+<code>Users</code>, and <code>Enrollments</code> references
+<code>Users</code> and <code>Courses</code>. Creating them out of order
+fails at the first foreign key that points at a table that does not
+exist yet.</p>
+<h3 data-number="2.2" id="why-utf8mb4"><span class="header-section-number">2.2</span> Why <code>utf8mb4</code></h3>
+<p>The database was created with <code>CHARACTER SET utf8mb4</code> and
+<code>COLLATE utf8mb4_unicode_ci</code>. In MySQL, <code>utf8</code> is
+an alias for <code>utf8mb3</code>, which holds at most three bytes per
+character and cannot store four-byte characters such as emoji or some
+Vietnamese characters outside the precomposed set. <code>utf8mb4</code>
+holds four bytes and covers the whole Unicode range. The seed data
+contains Vietnamese names with full diacritics, so the choice is not
+academic.</p>
+<h3 data-number="2.3" id="why-departments.managerid-allows-null"><span class="header-section-number">2.3</span> Why
+<code>Departments.ManagerID</code> allows NULL</h3>
+<p><code>Departments.ManagerID</code> is nullable and its foreign key
+uses <code>ON DELETE SET NULL</code>. The reason is a circular
+dependency: <code>Departments</code> needs <code>Users</code> to exist
+before it can be created, because the manager is a user. If
+<code>ManagerID</code> were <code>NOT NULL</code>, the first department
+could not be inserted until a user existed, and a user could not be
+inserted until a department existed, because <code>Courses</code>
+requires both. Making the column nullable breaks the circle. The cost is
+that a department can exist with no manager, so every query that reports
+a manager must handle that NULL.</p>
+<h3 data-number="2.4" id="verification"><span class="header-section-number">2.4</span> Verification</h3>
+<p>The seed data was checked against the summary table in Part 4.1 of
+the handout. Every number matches.</p>
+<p><strong>Table 1 — Row counts after the seed</strong></p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Handout expects</th>
+<th>Measured</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total users</td>
+<td>8 (5 students, 3 instructors)</td>
+<td>8 (5 + 3)</td>
+</tr>
+<tr>
+<td>Total courses</td>
+<td>5</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Courses with 0 enrollments</td>
+<td>1 (Linear Algebra)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Total enrollments</td>
+<td>11</td>
+<td>11</td>
+</tr>
+<tr>
+<td>NULL grade rows</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Total attendance records</td>
+<td>9</td>
+<td>9</td>
+</tr>
+<tr>
+<td>Students with 0 attendance records</td>
+<td>1 (Hoang Van Em)</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table 2 — Foreign key constraints</strong></p>
+<p>The handout says the verification query should show “7 foreign key
+constraints across the 6 tables”. The schema it defines contains
+<strong>8</strong>, and the query returns 8.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Constraint</th>
+<th>From</th>
+<th>To</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>fk_dept_manager</code></td>
+<td><code>Departments.ManagerID</code></td>
+<td><code>Users.UserID</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>fk_course_dept</code></td>
+<td><code>Courses.DeptID</code></td>
+<td><code>Departments.DeptID</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>fk_course_instructor</code></td>
+<td><code>Courses.InstructorID</code></td>
+<td><code>Users.UserID</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>fk_enroll_user</code></td>
+<td><code>Enrollments.UserID</code></td>
+<td><code>Users.UserID</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>fk_enroll_course</code></td>
+<td><code>Enrollments.CourseID</code></td>
+<td><code>Courses.CourseID</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>fk_lesson_course</code></td>
+<td><code>Lessons.CourseID</code></td>
+<td><code>Courses.CourseID</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>fk_att_lesson</code></td>
+<td><code>Attendance.LessonID</code></td>
+<td><code>Lessons.LessonID</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>fk_att_user</code></td>
+<td><code>Attendance.UserID</code></td>
+<td><code>Users.UserID</code></td>
+</tr>
+</tbody>
+</table>
+<p>A second error appears in Part 6. The handout says MySQL “in strict
+mode” rejects a <code>SELECT</code> whose non-aggregate columns are
+missing from the <code>GROUP BY</code>. The mechanism is the
+<code>ONLY_FULL_GROUP_BY</code> SQL mode, which is enabled by default in
+MySQL 8 and is not part of the strict-mode group. The behaviour
+described is correct; the name of the mode is not.</p>
+<h3 data-number="2.5" id="the-seed-data-is-built-to-expose-mistakes"><span class="header-section-number">2.5</span> The seed data is built to
+expose mistakes</h3>
+<p>Three properties of the seed data are deliberate, and each breaks a
+query that would pass on tidier data:</p>
+<ul>
+<li><strong>Course 5, Linear Algebra, has no enrollments.</strong> A
+query that counts students per course must show it with a count of 0. An
+<code>INNER JOIN</code> hides it, and that hides a course the academic
+office wants to review.</li>
+<li><strong>User 5, Hoang Van Em, has no attendance rows at
+all.</strong> He is absent from every attendance report, which is not
+the same as a student marked present at every lesson: it means there is
+no data.</li>
+<li><strong>Three enrollments have a NULL grade.</strong>
+<code>AVG</code>, <code>COUNT(column)</code> and <code>COUNT(*)</code>
+behave differently when a NULL is present, and the difference decides
+the average.</li>
+</ul>
+<hr />
+<h2 data-number="3" id="results"><span class="header-section-number">3</span> Results</h2>
+<h3 data-number="3.1" id="task-1.1-student-roster"><span class="header-section-number">3.1</span> Task 1.1 — Student roster</h3>
+<p><strong>Business question.</strong> The academic office needs a list
+of all students on the platform, sorted alphabetically by name, showing
+their name and email. Instructors should not appear.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.FullName,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>       u.Email</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Users u</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> u.<span class="kw">Role</span> <span class="op">=</span> <span class="st">&#39;student&#39;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> u.FullName;</span></code></pre></div>
+<p><strong>Table 3 — Result</strong></p>
+<table>
+<thead>
+<tr>
+<th>FullName</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hoang Van Em</td>
+<td>em.hoang@edu.vn</td>
+</tr>
+<tr>
+<td>Le Van Cuong</td>
+<td>cuong.le@edu.vn</td>
+</tr>
+<tr>
+<td>Nguyen Van An</td>
+<td>an.nguyen@edu.vn</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>dung.pham@edu.vn</td>
+</tr>
+<tr>
+<td>Tran Thi Bich</td>
+<td>bich.tran@edu.vn</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why <code>WHERE u.Role = &#39;student&#39;</code> and nothing
+else.</strong> <code>Users</code> holds exactly two roles,
+<code>student</code> and <code>instructor</code>, declared as an
+<code>ENUM</code>. No other column separates the two groups, so
+<code>Role</code> is the only possible filter, and the enum guarantees
+the value is one of the two and never NULL. The filter sits in
+<code>WHERE</code> rather than in the join condition because it depends
+on <code>Users</code> alone.</p>
+<p><strong>Is <code>Role</code> reliable?</strong> Reliable as a column,
+unreliable as a fact. The column cannot hold a value outside the enum,
+so there is no third state and no NULL. The value is entered by the
+academic office, so it can still be wrong:</p>
+<ul>
+<li>A student who also teaches has <code>Role = &#39;instructor&#39;</code> and
+will not appear, even though they are studying. The query answers
+“accounts whose role is <code>student</code>”, not “people who are
+studying”.</li>
+<li>Case does not matter here. MySQL compares strings with the column’s
+collation, and <code>utf8mb4_unicode_ci</code> is case-insensitive, so
+<code>&#39;Student&#39;</code> would also match. That is a property of the
+collation, not a guarantee in the schema.</li>
+</ul>
+<p>The likelier failure is not a wrong case but an account that was
+never classified, and <code>Role NOT NULL</code> prevents that: every
+account has to be created as one role or the other, which is a decision
+someone can still get wrong.</p>
+<hr />
+<h3 data-number="3.2" id="task-1.2-courses-with-their-department"><span class="header-section-number">3.2</span> Task 1.2 — Courses with their
+department</h3>
+<p><strong>Business question.</strong> Produce a report showing each
+course title, its credit count and the name of its department. Include
+all courses, even if something about the department data is unusual.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> c.Title    <span class="kw">AS</span> CourseTitle,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>       c.Credits  <span class="kw">AS</span> Credits,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>       d.DeptName <span class="kw">AS</span> DepartmentName</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Courses c</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> Departments d <span class="kw">ON</span> c.DeptID <span class="op">=</span> d.DeptID</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> c.Title;</span></code></pre></div>
+<p><strong>Table 4 — Result</strong></p>
+<table>
+<thead>
+<tr>
+<th>CourseTitle</th>
+<th>Credits</th>
+<th>DepartmentName</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Calculus I</td>
+<td>4</td>
+<td>Mathematics</td>
+</tr>
+<tr>
+<td>Data Structures</td>
+<td>3</td>
+<td>Computer Science</td>
+</tr>
+<tr>
+<td>Database Management</td>
+<td>3</td>
+<td>Computer Science</td>
+</tr>
+<tr>
+<td>Introduction to Programming</td>
+<td>3</td>
+<td>Computer Science</td>
+</tr>
+<tr>
+<td>Linear Algebra</td>
+<td>3</td>
+<td>Mathematics</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Which JOIN type, and why.</strong> <code>LEFT JOIN</code>,
+because the requirement is to include every course. A
+<code>LEFT JOIN</code> keeps a course row when the department side has
+no match, so a course cannot disappear because of its department.</p>
+<p><strong>What happens with the other JOIN type.</strong> Both versions
+were run and both return <strong>5 rows</strong> here:</p>
+<ul>
+<li><code>Courses.DeptID</code> is <code>NOT NULL</code>.</li>
+<li><code>fk_course_dept</code> uses <code>ON DELETE RESTRICT</code>, so
+a department cannot be deleted while a course still points at it.</li>
+</ul>
+<p>A course therefore cannot have a missing department in this schema,
+and the two queries are equivalent on this data. <code>LEFT JOIN</code>
+states the intent and keeps working if the constraint is relaxed, if a
+course is loaded from outside the schema, or if the report is reused on
+a table where the relationship is not guaranteed. It costs nothing
+here.</p>
+<p><strong>The “unusual department data”.</strong> The column in
+<code>Departments</code> that can be unusual is <code>ManagerID</code>,
+nullable for the bootstrapping reason in section 2.3. It does not affect
+this query, because the manager is not selected. The column that could
+produce a NULL here is <code>DeptName</code>, and <code>LEFT JOIN</code>
+protects the course row if that happens.</p>
+<hr />
+<h3 data-number="3.3" id="task-1.3-recent-enrollments"><span class="header-section-number">3.3</span> Task 1.3 — Recent
+enrollments</h3>
+<p><strong>Business question.</strong> Show the 5 most recent enrollment
+records, including the student’s name, the course title and the
+enrolment date.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.FullName <span class="kw">AS</span> StudentName,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>       c.Title    <span class="kw">AS</span> CourseTitle,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>       e.EnrollDate</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Enrollments e</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Users u   <span class="kw">ON</span> u.UserID   <span class="op">=</span> e.UserID</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Courses c <span class="kw">ON</span> c.CourseID <span class="op">=</span> e.CourseID</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> e.EnrollDate <span class="kw">DESC</span>, e.EnrollID <span class="kw">DESC</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">5</span>;</span></code></pre></div>
+<p><strong>Table 5 — Result</strong></p>
+<table>
+<thead>
+<tr>
+<th>StudentName</th>
+<th>CourseTitle</th>
+<th>EnrollDate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hoang Van Em</td>
+<td>Data Structures</td>
+<td>2024-09-09</td>
+</tr>
+<tr>
+<td>Hoang Van Em</td>
+<td>Introduction to Programming</td>
+<td>2024-09-09</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>Calculus I</td>
+<td>2024-09-08</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>Database Management</td>
+<td>2024-09-08</td>
+</tr>
+<tr>
+<td>Le Van Cuong</td>
+<td>Data Structures</td>
+<td>2024-09-07</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What “most recent” means technically.</strong>
+<code>ORDER BY e.EnrollDate DESC</code> sorts on <code>EnrollDate</code>
+alone. <code>EnrollDate</code> is a <code>DATE</code>, so its resolution
+is one day, and two enrolments made on the same day have the same sort
+value.</p>
+<p><strong>Is the tie broken deterministically?</strong> Not with the
+date alone. Three dates carry two rows each and one date carries four
+rows:</p>
+<p><strong>Table 6 — Rows per enrolment date</strong></p>
+<table>
+<thead>
+<tr>
+<th>EnrollDate</th>
+<th>RowsOnThatDate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2024-09-09</td>
+<td>2</td>
+</tr>
+<tr>
+<td>2024-09-08</td>
+<td>2</td>
+</tr>
+<tr>
+<td>2024-09-07</td>
+<td>2</td>
+</tr>
+<tr>
+<td>2024-09-06</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2024-09-05</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<p>The five rows returned take two from 09-09, two from 09-08, then one
+of the two rows from 09-07. The cut falls <strong>inside</strong> a tie,
+so the fifth row is decided by the tie rather than by the dates. MySQL
+is free to return tied rows in any order, and the order it picks is an
+implementation detail that can change between versions, between
+machines, and between runs after a data change.</p>
+<p><strong>The fix.</strong> <code>e.EnrollID DESC</code> is added as a
+second sort key. <code>EnrollID</code> is <code>AUTO_INCREMENT</code>,
+so a larger value means the row was inserted later, and within one day
+the later insertion is the more recent enrolment. The sort is now total,
+because <code>EnrollID</code> is unique. The tie at 2024-09-07 resolves
+to EnrollID 7 (<em>Data Structures</em>) before EnrollID 6
+(<em>Introduction to Programming</em>).</p>
+<p>Any report that takes the “top N by date” has a boundary problem, and
+the boundary is where the reader looks.</p>
+<hr />
+<h3 data-number="3.4" id="task-2.1-enrolment-count-per-course"><span class="header-section-number">3.4</span> Task 2.1 — Enrolment count per
+course</h3>
+<p><strong>Business question.</strong> The head of department wants to
+know how many students are enrolled in each course. The report must
+include courses with zero enrolments, because those are flagged for
+review.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> c.Title           <span class="kw">AS</span> CourseTitle,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COUNT</span>(e.EnrollID) <span class="kw">AS</span> EnrollmentCount</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Courses c</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> Enrollments e <span class="kw">ON</span> c.CourseID <span class="op">=</span> e.CourseID</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> c.CourseID, c.Title</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> EnrollmentCount <span class="kw">DESC</span>, c.Title;</span></code></pre></div>
+<p><strong>Table 7 — Result with LEFT JOIN</strong></p>
+<table>
+<thead>
+<tr>
+<th>CourseTitle</th>
+<th>EnrollmentCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Introduction to Programming</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Database Management</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Calculus I</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Data Structures</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Linear Algebra</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table 8 — The same query with INNER JOIN</strong></p>
+<table>
+<thead>
+<tr>
+<th>CourseTitle</th>
+<th>EnrollmentCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Introduction to Programming</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Database Management</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Calculus I</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Data Structures</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Which JOIN type.</strong> <code>LEFT JOIN</code>. The
+question is about every course, and the courses with no students are the
+reason the report exists. An <code>INNER JOIN</code> builds its result
+from the courses that have at least one enrolment, so Linear Algebra is
+not in the output at all, and the query answers a different question:
+how many students are in the courses that have students. The 4 rows
+against 5 rows is the whole difference.</p>
+<p><strong>What <code>COUNT</code> returns on the unmatched
+side.</strong> <code>COUNT(e.EnrollID)</code> returns <strong>0</strong>
+for a course with no enrolments. The <code>LEFT JOIN</code> still
+produces one row for that course, and every column of the right-hand
+side in that row is NULL. <code>COUNT</code> ignores NULL, so the count
+is 0 and not NULL.</p>
+<p><code>COUNT(*)</code> would return <strong>1</strong> for the same
+course, because it counts rows and the padded row is a row. After a
+<code>LEFT JOIN</code>, <code>COUNT(*)</code> counts the padding, not
+the matches. This is the mistake in Part 8 question 7.</p>
+<p><strong>Sorting.</strong> <code>ORDER BY EnrollmentCount DESC</code>
+uses the select alias, which MySQL allows. <code>c.Title</code> is the
+second key so that the two courses with a count of 2 do not swap places
+between runs.</p>
+<hr />
+<h3 data-number="3.5" id="task-2.2-average-grade-by-course"><span class="header-section-number">3.5</span> Task 2.2 — Average grade by
+course</h3>
+<p><strong>Business question.</strong> Calculate the average grade for
+each course. Only include courses where at least 2 grades have been
+recorded, not merely enrolled.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> c.Title                <span class="kw">AS</span> CourseTitle,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">ROUND</span>(<span class="fu">AVG</span>(e.Grade), <span class="dv">1</span>) <span class="kw">AS</span> AverageGrade,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COUNT</span>(e.Grade)         <span class="kw">AS</span> GradedStudentCount</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Courses c</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Enrollments e <span class="kw">ON</span> c.CourseID <span class="op">=</span> e.CourseID</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> e.Grade <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> c.CourseID, c.Title</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> <span class="fu">COUNT</span>(e.Grade) <span class="op">&gt;=</span> <span class="dv">2</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> AverageGrade <span class="kw">DESC</span>, c.Title;</span></code></pre></div>
+<p><strong>Table 9 — Result</strong></p>
+<table>
+<thead>
+<tr>
+<th>CourseTitle</th>
+<th>AverageGrade</th>
+<th>GradedStudentCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Introduction to Programming</td>
+<td>7.5</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Database Management</td>
+<td>7.2</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Two filters, two different jobs.</strong>
+<code>WHERE e.Grade IS NOT NULL</code> removes the ungraded rows before
+the rows are grouped, so NULL grades never enter the average or the
+count. <code>HAVING COUNT(e.Grade) &gt;= 2</code> keeps only the groups
+holding at least two real grades. That second condition cannot be
+written in <code>WHERE</code>: when <code>WHERE</code> runs, the groups
+do not exist and the aggregate has not been computed.</p>
+<p>The handout offers a second route: drop the <code>WHERE</code> and
+use <code>HAVING</code> alone with a conditional count, because
+<code>AVG</code> already ignores NULL. That route was run as well and
+returns the same two rows. The <code>WHERE</code> route is kept because
+it removes the ungraded rows before the aggregation instead of after it,
+so the aggregate works on less data.</p>
+<p><strong>Is <code>AVG(Grade)</code> the same as
+<code>SUM(Grade) / COUNT(*)</code>?</strong></p>
+<ul>
+<li><code>AVG(Grade)</code> ignores NULL and divides by the number of
+<strong>non-NULL</strong> grades.</li>
+<li><code>SUM(Grade) / COUNT(*)</code> divides by the number of
+<strong>rows</strong>, including the rows where the grade is NULL.</li>
+</ul>
+<p>With the <code>WHERE</code> filter in place the two agree, because
+the filter has removed the NULL rows and <code>COUNT(*)</code> equals
+<code>COUNT(e.Grade)</code>. Remove the filter and they part
+company:</p>
+<p><strong>Table 10 — The three averages for the same
+course</strong></p>
+<table style="width:99%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>CourseTitle</th>
+<th>Enrolled</th>
+<th>Graded</th>
+<th><code>AVG(Grade)</code></th>
+<th><code>SUM(Grade)/COUNT(*)</code></th>
+<th><code>AVG(COALESCE(Grade,0))</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Introduction to Programming</td>
+<td>4</td>
+<td>3</td>
+<td>7.5000</td>
+<td>5.6250</td>
+<td>5.6250</td>
+</tr>
+<tr>
+<td>Database Management</td>
+<td>3</td>
+<td>3</td>
+<td>7.1667</td>
+<td>7.1667</td>
+<td>7.1667</td>
+</tr>
+<tr>
+<td>Calculus I</td>
+<td>2</td>
+<td>1</td>
+<td>7.5000</td>
+<td>3.7500</td>
+<td>3.7500</td>
+</tr>
+<tr>
+<td>Data Structures</td>
+<td>2</td>
+<td>1</td>
+<td>6.0000</td>
+<td>3.0000</td>
+<td>3.0000</td>
+</tr>
+</tbody>
+</table>
+<p>For Introduction to Programming the enrolled sum is 22.5 across 4
+students, but only 3 of them have a grade. <code>AVG(Grade)</code> gives
+22.5 / 3 = <strong>7.5</strong>. <code>SUM/COUNT(*)</code> gives 22.5 /
+4 = <strong>5.625</strong>, because the ungraded student is counted in
+the denominator and contributes nothing to the sum. The second number
+treats an ungraded student as a zero; the first ignores the student. On
+one course the gap between 7.5 and 5.625 is the difference between a
+student who has not been assessed yet and a student who has been failed,
+and a report producing the wrong one does not crash or look wrong. It
+just misleads.</p>
+<p><strong><code>ROUND</code> and <code>COUNT(e.Grade)</code>.</strong>
+<code>ROUND</code> is applied to the average, not to the sum, so the
+rounding happens last. <code>COUNT(e.Grade)</code> counts the non-NULL
+grades, so it is the number of students who were actually graded.
+<code>COUNT(*)</code> gives the same number here because the
+<code>WHERE</code> filter removed the ungraded rows, but
+<code>COUNT(e.Grade)</code> stays correct if the filter is dropped.</p>
+<hr />
+<h3 data-number="3.6" id="task-2.3-students-with-multiple-absences"><span class="header-section-number">3.6</span> Task 2.3 — Students with
+multiple absences</h3>
+<p><strong>Business question.</strong> Flag students who have been
+recorded as absent more than once across any lesson. Show their name and
+absence count.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.FullName <span class="kw">AS</span> StudentName,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COUNT</span>(<span class="op">*</span>)   <span class="kw">AS</span> AbsenceCount</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Attendance a</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Users u <span class="kw">ON</span> u.UserID <span class="op">=</span> a.UserID</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> a.Status <span class="op">=</span> <span class="st">&#39;absent&#39;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> u.UserID, u.FullName</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="op">&gt;</span> <span class="dv">1</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> AbsenceCount <span class="kw">DESC</span>, u.FullName;</span></code></pre></div>
+<p><strong>Table 11 — Result: no rows</strong></p>
+<p><strong>Table 12 — The absence count per student</strong></p>
+<table>
+<thead>
+<tr>
+<th>StudentName</th>
+<th>AttendanceRecords</th>
+<th>Absences</th>
+<th>LateArrivals</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hoang Van Em</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Le Van Cuong</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Nguyen Van An</td>
+<td>4</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Tran Thi Bich</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>WHERE</code> versus <code>HAVING</code>
+placement.</strong> <code>WHERE a.Status = &#39;absent&#39;</code> filters
+individual attendance rows before the grouping, so the groups are built
+from absences alone and the count in <code>HAVING</code> counts
+absences. With the status test in <code>HAVING</code> instead,
+<code>COUNT(*)</code> would count every attendance row of the student
+and the threshold would mean “attended more than one lesson” rather than
+“was absent more than once”. Late arrivals are removed by the same
+<code>WHERE</code> clause, since the test is an equality test on
+<code>&#39;absent&#39;</code>.</p>
+<p><strong>The result is empty, and the reason is in the data.</strong>
+The seed contains exactly two rows with <code>Status = &#39;absent&#39;</code>:
+AttID 3 (Le Van Cuong, lesson 1) and AttID 6 (Tran Thi Bich, lesson 2).
+Each student has one absence, so nobody reaches the threshold of two.
+The query is correct; the data contains no case that satisfies it.</p>
+<p>To show the threshold works, a probe was run: one extra
+<code>&#39;absent&#39;</code> row was inserted for Le Van Cuong inside a
+transaction, the query was re-run, and the transaction rolled back.</p>
+<p><strong>Table 13 — The probe result</strong></p>
+<table>
+<thead>
+<tr>
+<th>StudentName</th>
+<th>AbsenceCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Le Van Cuong</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>The attendance table was verified to hold 9 rows again after the
+rollback, so the seed data is unchanged. One detail: the
+<code>AUTO_INCREMENT</code> counter is not transactional in InnoDB, so
+the counter advanced even though the row did not. That is normal InnoDB
+behaviour and it changes no data.</p>
+<p><strong>Does User 5 (Hoang Van Em) appear, and should he?</strong> He
+does not appear, which is correct: he has zero absences, so he fails a
+“more than one absence” test. His absence from the result does
+<strong>not</strong> mean perfect attendance. It means there is no data
+about his attendance.</p>
+<p>Those two states are different and one report cannot tell them apart,
+because both produce zero rows:</p>
+<ul>
+<li>absent from the result with absences on record: a real pattern worth
+a look;</li>
+<li>absent from the result with no records at all: an unknown, which for
+an academic office is usually the more urgent of the two.</li>
+</ul>
+<p>A production report has to separate them, by reporting the number of
+attendance records next to the number of absences, as Table 12 does.
+That uses <code>COUNT(CASE WHEN a.Status = &#39;absent&#39; THEN 1 END)</code>
+rather than <code>SUM(a.Status = &#39;absent&#39;)</code>, because
+<code>SUM</code> over an empty set of non-NULL values returns NULL
+rather than 0, and Hoang Van Em’s padded row would publish a NULL.</p>
+<hr />
+<h3 data-number="3.7" id="task-3.1-students-at-risk"><span class="header-section-number">3.7</span> Task 3.1 — Students at
+risk</h3>
+<p><strong>Business question.</strong> Identify students who are
+enrolled in at least 3 courses but have not received a grade in
+<strong>any</strong> of those courses. If a student has even one graded
+course, exclude them.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.FullName                        <span class="kw">AS</span> StudentName,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COUNT</span>(e.EnrollID)                  <span class="kw">AS</span> EnrolledCourseCount,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COUNT</span>(e.EnrollID) <span class="op">-</span> <span class="fu">COUNT</span>(e.Grade) <span class="kw">AS</span> UngradedCourseCount</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Users u</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Enrollments e <span class="kw">ON</span> u.UserID <span class="op">=</span> e.UserID</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> u.<span class="kw">Role</span> <span class="op">=</span> <span class="st">&#39;student&#39;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> u.UserID, u.FullName</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> <span class="fu">COUNT</span>(e.EnrollID) <span class="op">&gt;=</span> <span class="dv">3</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>   <span class="kw">AND</span> <span class="fu">COUNT</span>(e.Grade) <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> u.FullName;</span></code></pre></div>
+<p><strong>Table 14 — Result: no rows</strong></p>
+<p><strong>Why no subquery is needed.</strong> The handout asks for a
+solution with joins and <code>HAVING</code> only, and both halves of the
+rule are conditions on a group:</p>
+<ul>
+<li>“at least 3 courses” is the number of enrolment rows in the group,
+<code>COUNT(e.EnrollID) &gt;= 3</code>;</li>
+<li>“no grade in any course” is the number of non-NULL grades in the
+group being zero, <code>COUNT(e.Grade) = 0</code>.</li>
+</ul>
+<p>A group is what <code>GROUP BY</code> produces and a condition on a
+group is what <code>HAVING</code> is for. The aggregate does not exist
+before the rows are grouped, so neither condition can be written in
+<code>WHERE</code>.</p>
+<p><strong>The two counts.</strong> <code>COUNT(e.EnrollID)</code>
+counts the enrolment rows; every joined row has a non-NULL
+<code>EnrollID</code>, so it is the number of courses the student is
+enrolled in. <code>COUNT(e.Grade)</code> counts the rows where
+<code>Grade</code> is not NULL, so it is the number of courses that were
+graded. <code>COUNT(e.Grade) = 0</code> is the rule “not a single grade
+exists”, expressed as one number.</p>
+<p><strong>The output column name.</strong> <code>COUNT(e.Grade)</code>
+is the graded count, so it cannot be published under the name
+<code>UngradedCourseCount</code>. The ungraded count is the enrolled
+count minus the graded count, which is why the query selects
+<code>COUNT(e.EnrollID) - COUNT(e.Grade)</code>.</p>
+<p><strong>The trap, walked through.</strong> A student enrolled in 3
+courses, 2 graded and 1 not:</p>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Value</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNT(e.EnrollID) &gt;= 3</code></td>
+<td>3</td>
+<td>passes</td>
+</tr>
+<tr>
+<td><code>COUNT(e.Grade) = 0</code></td>
+<td>2</td>
+<td><strong>fails</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The student is excluded, as the requirement asks: if a student has
+even one graded course, exclude them.</p>
+<p>The trap is to write the condition as
+<code>COUNT(e.Grade) = COUNT(e.EnrollID)</code>, or to filter the
+ungraded rows with <code>WHERE e.Grade IS NULL</code> and count the
+survivors. That answers a different question, “students whose most
+recent row happens to be ungraded”, and a student with 3 courses of
+which 2 are graded would pass it. The report would then flag a student
+who is being assessed normally, which is the silently wrong report Part
+3.6 warns about.</p>
+<p><strong>Why the seed data cannot show this rule working.</strong> The
+enrolment and grading counts per student are:</p>
+<p><strong>Table 15 — Enrolled and graded per student</strong></p>
+<table>
+<thead>
+<tr>
+<th>StudentName</th>
+<th>Enrolled</th>
+<th>Graded</th>
+<th>Ungraded</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nguyen Van An</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Tran Thi Bich</td>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Le Van Cuong</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Hoang Van Em</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Only one student has 3 or more courses, and that student has 2
+grades, so the first test passes and the second fails. No student in the
+seed data has every enrolment ungraded, so the rule matches nobody at
+any threshold.</p>
+<p>A probe was run to prove the logic: a student with 3 ungraded
+enrolments was inserted inside a transaction.</p>
+<p><strong>Table 16 — The probe result</strong></p>
+<table>
+<thead>
+<tr>
+<th>StudentName</th>
+<th>EnrolledCourseCount</th>
+<th>UngradedCourseCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PROBE Student</td>
+<td>3</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>The probe then gave that student 2 grades out of 3, which is the trap
+case, and the query returned no rows, so the student was excluded as
+required. The transaction was rolled back and the counts of
+<code>Users</code> (8) and <code>Enrollments</code> (11) were verified
+unchanged.</p>
+<hr />
+<h3 data-number="3.8" id="task-3.2-the-missing-attendance-problem"><span class="header-section-number">3.8</span> Task 3.2 — The missing
+attendance problem</h3>
+<p><strong>Business question.</strong> Find students who are enrolled in
+a course but have <strong>no attendance records for any lesson in that
+course</strong>.</p>
+<p><strong>What the requirement means.</strong> The scope is the pair
+(student, course). The test is not “the student has no record for some
+lesson” but “the student has no record for <strong>any</strong> of the
+lessons of this course”. A student marked absent for lesson 1 with no
+row for lesson 2 does have attendance records for that course, so that
+pair must not be reported. Courses with no lessons scheduled are
+excluded, as the handout requires and because “no attendance for any
+lesson of this course” is not a meaningful statement about a course with
+no lessons.</p>
+<p><strong>Version A — LEFT JOIN with a NULL check</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.FullName <span class="kw">AS</span> StudentName,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>       c.Title    <span class="kw">AS</span> CourseTitle</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Enrollments e</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Users u   <span class="kw">ON</span> u.UserID   <span class="op">=</span> e.UserID</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Courses c <span class="kw">ON</span> c.CourseID <span class="op">=</span> e.CourseID</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Lessons l <span class="kw">ON</span> l.CourseID <span class="op">=</span> c.CourseID</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> Attendance a <span class="kw">ON</span> a.UserID <span class="op">=</span> e.UserID <span class="kw">AND</span> a.LessonID <span class="op">=</span> l.LessonID</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> u.UserID, c.CourseID</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> <span class="fu">COUNT</span>(a.AttID) <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> u.FullName, c.Title;</span></code></pre></div>
+<p>The join fans the rows out to one row per (student, course, lesson).
+Attendance is joined with <strong>both</strong> conditions,
+<code>a.UserID = e.UserID</code> and
+<code>a.LessonID = l.LessonID</code>, so the attendance row must belong
+to this student and to this lesson; without the <code>UserID</code>
+condition the query would match any student’s record for the lesson. The
+rows are then grouped by student and course, and
+<code>HAVING COUNT(a.AttID) = 0</code> asks how many attendance records
+this student has across all the lessons of this course. Zero means the
+pair is reported.</p>
+<p><strong>Version B — NOT EXISTS</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.FullName <span class="kw">AS</span> StudentName,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>       c.Title    <span class="kw">AS</span> CourseTitle</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Enrollments e</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Users u   <span class="kw">ON</span> u.UserID   <span class="op">=</span> e.UserID</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Courses c <span class="kw">ON</span> c.CourseID <span class="op">=</span> e.CourseID</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">EXISTS</span> (<span class="kw">SELECT</span> <span class="dv">1</span> <span class="kw">FROM</span> Lessons l <span class="kw">WHERE</span> l.CourseID <span class="op">=</span> c.CourseID)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> (</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">SELECT</span> <span class="dv">1</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">FROM</span> Lessons l</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">JOIN</span> Attendance a <span class="kw">ON</span> a.LessonID <span class="op">=</span> l.LessonID <span class="kw">AND</span> a.UserID <span class="op">=</span> e.UserID</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">WHERE</span> l.CourseID <span class="op">=</span> c.CourseID)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> u.UserID, c.CourseID</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> u.FullName, c.Title;</span></code></pre></div>
+<p>The correlated subquery looks for any attendance row of this student
+in any lesson of this course. The <code>EXISTS</code> clause on
+<code>Lessons</code> keeps the courses that have no lessons out.</p>
+<p><strong>Table 17 — Versions A and B: the same 4 pairs</strong></p>
+<table>
+<thead>
+<tr>
+<th>StudentName</th>
+<th>CourseTitle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hoang Van Em</td>
+<td>Introduction to Programming</td>
+</tr>
+<tr>
+<td>Nguyen Van An</td>
+<td>Calculus I</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>Calculus I</td>
+</tr>
+<tr>
+<td>Tran Thi Bich</td>
+<td>Database Management</td>
+</tr>
+</tbody>
+</table>
+<p>Both return the same 4 pairs, because both scope the attendance check
+to the whole course.</p>
+<p><strong>The trap.</strong> The naïve forms do not. A
+<code>LEFT JOIN</code> with a bare <code>WHERE a.AttID IS NULL</code>
+and no <code>GROUP BY</code> tests each lesson row on its own and
+reports a pair as soon as <strong>one</strong> lesson has no record. A
+<code>NOT EXISTS</code> correlated on the single lesson row does the
+same.</p>
+<p><strong>Table 18 — The naïve version returns 6 pairs</strong></p>
+<table>
+<thead>
+<tr>
+<th>StudentName</th>
+<th>CourseTitle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hoang Van Em</td>
+<td>Introduction to Programming</td>
+</tr>
+<tr>
+<td>Le Van Cuong</td>
+<td>Introduction to Programming</td>
+</tr>
+<tr>
+<td>Nguyen Van An</td>
+<td>Calculus I</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>Calculus I</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>Database Management</td>
+</tr>
+<tr>
+<td>Tran Thi Bich</td>
+<td>Database Management</td>
+</tr>
+</tbody>
+</table>
+<p>The two extra pairs are Le Van Cuong and Pham Thi Dung. The reasoning
+table shows why they must not be there:</p>
+<p><strong>Table 19 — Attendance records per enrolled student-course
+pair</strong></p>
+<table>
+<thead>
+<tr>
+<th>StudentName</th>
+<th>CourseTitle</th>
+<th>LessonsInCourse</th>
+<th>AttendanceRecords</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hoang Van Em</td>
+<td>Introduction to Programming</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Le Van Cuong</td>
+<td>Introduction to Programming</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Nguyen Van An</td>
+<td>Calculus I</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Nguyen Van An</td>
+<td>Database Management</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Nguyen Van An</td>
+<td>Introduction to Programming</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>Calculus I</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Pham Thi Dung</td>
+<td>Database Management</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Tran Thi Bich</td>
+<td>Database Management</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Tran Thi Bich</td>
+<td>Introduction to Programming</td>
+<td>2</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>Le Van Cuong was marked absent for lesson 1 of Introduction to
+Programming and has no row for lesson 2, so he has 1 attendance record
+for that course and does not belong in the report. The naïve query
+reports him because it found the missing lesson 2 row and stopped there.
+The difference between 4 and 6 rows is a report telling the academic
+office that two students have vanished from a class, when their
+attendance record is merely incomplete.</p>
+<p><strong>Which performs better on a table with 1,000,000
+rows?</strong> This was measured, not asserted. A second dataset was
+built with 100,000 users, 4,999 courses, 1,000,000 enrolments, 9,998
+lessons and <strong>1,000,000 attendance rows</strong>, and both
+versions were run under <code>EXPLAIN ANALYZE</code>.</p>
+<p><strong>Table 20 — Task 3.2 at scale</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Version</th>
+<th>Median of 3 runs</th>
+<th>Plan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A, LEFT JOIN</td>
+<td><strong>9,309 ms</strong></td>
+<td>nested loop left join producing 2,000,000 rows, then
+<code>Aggregate using temporary table</code> over 1,000,000 groups, then
+<code>Table scan on &lt;temporary&gt;</code></td>
+</tr>
+<tr>
+<td>B, NOT EXISTS</td>
+<td><strong>3,655 ms</strong></td>
+<td><code>Nested loop antijoin</code>, 1,000,000 probes into a
+materialised, de-duplicated subquery</td>
+</tr>
+</tbody>
+</table>
+<p><code>NOT EXISTS</code> is about <strong>2.5 times faster</strong>.
+The <code>LEFT JOIN</code> version has to build the join before it can
+answer the question: every (student, course, lesson) combination is
+produced, an attendance row is matched or not matched for each one, and
+the groups are counted. With two lessons per course that is 2,000,000
+rows and 2,000,000 attendance lookups, and the groups land in a
+temporary table that is scanned again.</p>
+<p>The <code>NOT EXISTS</code> version asks a question that one lookup
+per student-course pair can answer. MySQL rewrote it into an
+<strong>antijoin</strong> with a materialised, de-duplicated subquery,
+so it performs about 1,000,000 probes and never builds the 2,000,000-row
+intermediate result.</p>
+<p>Two caveats. The <code>NOT EXISTS</code> version still has to be
+written correctly: the naive per-lesson form in Table 18 is also a
+<code>NOT EXISTS</code>, and it is wrong. The speed advantage comes from
+scoping the subquery to the whole course, not from the keyword. And on a
+well-indexed table the planner can make the two plans converge, so the
+gap can be smaller in practice than 2.5 times. What does not change is
+that the <code>LEFT JOIN</code> version does strictly more work, because
+it materialises the pairs it is going to discard.</p>
+<hr />
+<h3 data-number="3.9" id="task-3.3-explain-analysis"><span class="header-section-number">3.9</span> Task 3.3 — EXPLAIN
+analysis</h3>
+<p><strong>The query under analysis.</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> u.FullName, <span class="fu">COUNT</span>(e.EnrollID) <span class="kw">AS</span> EnrolledCourses</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Users u</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> Enrollments e <span class="kw">ON</span> u.UserID <span class="op">=</span> e.UserID</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> u.<span class="kw">Role</span> <span class="op">=</span> <span class="st">&#39;student&#39;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> u.UserID, u.FullName</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> <span class="fu">COUNT</span>(e.EnrollID) <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> EnrolledCourses <span class="kw">DESC</span>;</span></code></pre></div>
+<p><strong>Table 21 — EXPLAIN on the seed data</strong></p>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr>
+<th>id</th>
+<th>select_type</th>
+<th>table</th>
+<th>type</th>
+<th>possible_keys</th>
+<th>key</th>
+<th>key_len</th>
+<th>ref</th>
+<th>rows</th>
+<th>filtered</th>
+<th>Extra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SIMPLE</td>
+<td>u</td>
+<td><strong>ALL</strong></td>
+<td>NULL</td>
+<td><strong>NULL</strong></td>
+<td>NULL</td>
+<td>NULL</td>
+<td>9</td>
+<td>50.00</td>
+<td>Using where; Using temporary; Using filesort</td>
+</tr>
+<tr>
+<td>1</td>
+<td>SIMPLE</td>
+<td>e</td>
+<td><strong>ref</strong></td>
+<td>uq_enrollment</td>
+<td><strong>uq_enrollment</strong></td>
+<td>4</td>
+<td>educonnect.u.UserID</td>
+<td>2</td>
+<td>100.00</td>
+<td>Using index</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What MySQL is doing, in plain language.</strong></p>
+<ul>
+<li><strong><code>Users</code> (u), type = <code>ALL</code>, key =
+<code>NULL</code>.</strong> A full table scan. MySQL reads every row of
+<code>Users</code> and tests the <code>Role</code> column on each one,
+because no index on <code>Role</code> exists.
+<code>filtered = 50.00</code> is the planner’s estimate that half the
+rows are students.</li>
+<li><strong><code>Enrollments</code> (e), type = <code>ref</code>, key =
+<code>uq_enrollment</code>.</strong> For each user row, MySQL looks up
+that user’s enrolments through the unique key
+<code>(UserID, CourseID)</code>. The <code>ref</code> value
+<code>educonnect.u.UserID</code> shows the lookup is driven by the user
+id from the outer table. <code>Using index</code> means the index alone
+supplies every column needed, so the table rows are never touched. This
+part of the plan is already good: the schema’s own unique key supports
+the join and no new index is needed for it.</li>
+<li><strong><code>Extra</code> on <code>Users</code>:
+<code>Using temporary; Using filesort</code>.</strong> MySQL builds a
+temporary table to hold the groups, then sorts the result again, because
+the <code>ORDER BY</code> is on an aggregate value that no index can
+supply. On 8 rows this costs nothing. On 100,000 users it is the
+dominant cost.</li>
+</ul>
+<p>One note on <code>rows</code>: the classic <code>EXPLAIN</code>
+reports 9 rows for <code>Users</code> while the table holds 8.
+<code>EXPLAIN ANALYZE</code> on the same query reports the true figure,
+<code>Table scan on u (rows=8)</code>, because it executes the query.
+<code>rows</code> in a classic <code>EXPLAIN</code> is an estimate from
+the storage engine’s statistics, not a measurement, and it drifts after
+inserts and rollbacks. Any conclusion that depends on the real row count
+has to come from <code>EXPLAIN ANALYZE</code>.</p>
+<p><strong>Would this query be slow with 100,000 users?</strong> Yes,
+and the bottleneck is not the join. It is the scan of <code>Users</code>
+plus the temporary table for the <code>GROUP BY</code>. The measurement
+was made on a scale database with 100,000 users, 4,999 courses and
+1,000,000 enrolments.</p>
+<p><strong>Table 22 — Task 3.3 at scale, 3 runs each</strong></p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Runs (ms)</th>
+<th>Median</th>
+<th>Plan on <code>Users</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No index on <code>Role</code></td>
+<td>821, 1177, 777</td>
+<td><strong>821 ms</strong></td>
+<td><code>type=ALL</code>, <code>key=NULL</code>,
+<code>Table scan on u</code>,
+<code>Aggregate using temporary table</code></td>
+</tr>
+<tr>
+<td><code>+ idx_users_role (Role)</code></td>
+<td>743, 752, 736</td>
+<td><strong>743 ms</strong></td>
+<td><code>type=ref</code>, <code>key=idx_users_role</code>,
+<code>Using temporary; Using filesort</code></td>
+</tr>
+<tr>
+<td><code>+ idx_users_role_id_name (Role, UserID, FullName)</code></td>
+<td>358, 423, 360</td>
+<td><strong>360 ms</strong></td>
+<td><code>type=ref</code>, <code>key=idx_users_role_id_name</code>,
+<code>Using index</code>, a streaming <code>Group aggregate</code></td>
+</tr>
+<tr>
+<td><code>+</code> same index, <code>GROUP BY u.UserID</code> only</td>
+<td>340, 299, 304</td>
+<td><strong>304 ms</strong></td>
+<td><code>Covering index lookup on u</code>,
+<code>Group aggregate</code>, <code>Stream results</code></td>
+</tr>
+</tbody>
+</table>
+<p>The obvious index, on the column in the <code>WHERE</code> clause,
+barely moves the time: 821 ms becomes 743 ms, a difference smaller than
+the run-to-run spread within the no-index configuration (777-1,177 ms).
+The <code>Users</code> table is small enough to sit in the buffer pool,
+so the sequential scan is already cheap, and the index lookup replaces
+it with random access. The index is also not covering, so MySQL still
+visits the table row for every student it finds. It changes the plan but
+not the cost.</p>
+<p>The <strong>composite</strong> index is the one that pays.
+<code>Role, UserID, FullName</code> covers every column the query reads,
+so the table is never touched, and the rows arrive from the index
+already grouped by <code>UserID</code>. That lets the plan change from
+<code>Aggregate using temporary table</code> to a streaming
+<code>Group aggregate</code> that never builds the temporary table:
+<strong>821 ms → 360 ms</strong>, a factor of 2.3.</p>
+<p>Dropping <code>FullName</code> from the <code>GROUP BY</code> is
+legal, since <code>FullName</code> is functionally dependent on the
+primary key <code>UserID</code> and MySQL’s functional-dependency
+detection allows it. That takes the query to <strong>304
+ms</strong>.</p>
+<p><code>Using filesort</code> remains in every plan and always will.
+The <code>ORDER BY</code> sorts on an aggregate result, and no index can
+provide an aggregate result in sorted order. That sort is over the
+number of groups, not the number of rows, so it is not the
+bottleneck.</p>
+<p><strong>Which index would you add?</strong></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_users_role_id_name <span class="kw">ON</span> Users (<span class="kw">Role</span>, UserID, FullName);</span></code></pre></div>
+<p>It is the index the measurements support, not the obvious one. “Add
+an index on the column in the <code>WHERE</code> clause” is a rule of
+thumb, and here it was wrong by a factor of two.</p>
+<hr />
+<h2 data-number="4" id="discussion-part-8-thinking-questions"><span class="header-section-number">4</span> Discussion — Part 8 thinking
+questions</h2>
+<h3 data-number="4.1" id="q1-the-null-semantics-trap"><span class="header-section-number">4.1</span> Q1 — The NULL semantics
+trap</h3>
+<p><em>Suppose you want the average grade among all enrolled students,
+treating ungraded students as 0. How would you rewrite the query? Is
+that fair?</em></p>
+<p>The rewrite uses <code>COALESCE</code> and divides by the number of
+enrolled students:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> c.Title,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">ROUND</span>(<span class="fu">AVG</span>(<span class="fu">COALESCE</span>(e.Grade, <span class="dv">0</span>)), <span class="dv">4</span>) <span class="kw">AS</span> AvgUngradedAsZero,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">ROUND</span>(<span class="fu">AVG</span>(e.Grade), <span class="dv">4</span>)              <span class="kw">AS</span> AvgIgnoringUngraded</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Courses c</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Enrollments e <span class="kw">ON</span> c.CourseID <span class="op">=</span> e.CourseID</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> c.CourseID, c.Title;</span></code></pre></div>
+<p><code>AVG(e.Grade)</code> cannot be used, because it ignores NULL and
+divides by the non-NULL count, which is the opposite of what is asked.
+<code>SUM(COALESCE(e.Grade, 0)) / COUNT(e.EnrollID)</code> is the long
+form of the same thing. Table 10 shows all three averages side by side;
+for Introduction to Programming they are 7.5000, 5.6250 and 5.6250.</p>
+<p><strong>Is treating ungraded students as 0 fair?</strong> Not as a
+description of academic performance. A grade of 0 means the work was
+submitted and failed. A missing grade means the work has not been
+assessed yet, or the assessment has not been recorded. The query
+converts the second into the first.</p>
+<p><strong>When would a teacher legitimately want that number?</strong>
+When the question is about workload rather than performance: how many
+students are outstanding, what share of a cohort still needs a mark,
+whether a course is keeping up with its marking schedule. In that frame
+“0” is a legitimate encoding of “nothing recorded yet”, because the
+measure is the gap, not the achievement.</p>
+<p><strong>When would it be misleading?</strong> Whenever the number is
+read as performance. A course where 30 students are ungraded and 5
+scored 9.0 averages 7.5 under the fair rule and 4.5 under the zero rule.
+The zero rule makes a marking backlog look like a failing course, and
+makes the department act on a data-entry problem as if it were a
+teaching problem. The number is defensible only if it is published next
+to the number of ungraded students, because the two together say what
+either one alone hides.</p>
+<h3 data-number="4.2" id="q2-join-order-and-performance"><span class="header-section-number">4.2</span> Q2 — JOIN order and
+performance</h3>
+<p><em>If you had to explain to the query planner why joining Courses
+before Enrollments might be faster than the reverse, what would you say?
+What database property determines which table should be the “outer”
+table in a nested loop join?</em></p>
+<p>The property is the estimated number of rows, and the outer table
+should be the larger one, with the smaller table on the inside of the
+nested loop.</p>
+<p>The loop runs the inner lookup once for every row of the outer table,
+so the total cost is roughly
+<code>outer rows × cost of one inner lookup</code>. If the outer table
+is small, the inner table is scanned repeatedly. If the outer table is
+large, the inner table is probed many times, but each probe is a cheap
+index lookup. The small table goes inside, where a single scan is
+reused, and the large table goes outside, where each row triggers one
+indexed probe.</p>
+<p>The <code>EXPLAIN</code> output shows this directly:
+<code>rows</code> estimates how many times the inner table is probed,
+and <code>key</code> says whether the probe is an index lookup or a full
+scan. In the Task 3.3 plan, <code>Users</code> has <code>rows = 9</code>
+and drives the join, while <code>Enrollments</code> is entered with
+<code>type = ref</code>, the cheap case.</p>
+<p>Joining <code>Courses</code> before <code>Enrollments</code> would be
+faster when <code>Courses</code> is much smaller than
+<code>Enrollments</code>, here 5 rows against 1,000,000 at scale.
+Starting from <code>Courses</code>, MySQL reads the 5 courses and looks
+up the enrolments for each through the index on <code>CourseID</code>,
+instead of walking a million enrolment rows and testing each against the
+course list. The join order the planner picks is visible in the
+<code>EXPLAIN</code> output, and the rule behind it is: the smallest
+table the join can start from, with the other tables entered through
+indexes.</p>
+<h3 data-number="4.3" id="q3-having-versus-a-subquery"><span class="header-section-number">4.3</span> Q3 — HAVING versus a
+subquery</h3>
+<p><em>Task 2.2 can be solved using HAVING, or using a subquery in the
+FROM clause. Which is more readable? Does MySQL execute them
+differently?</em></p>
+<p>Both were written and both were run. The <code>HAVING</code>
+version:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> c.Title, <span class="fu">ROUND</span>(<span class="fu">AVG</span>(e.Grade), <span class="dv">1</span>) <span class="kw">AS</span> AverageGrade, <span class="fu">COUNT</span>(e.Grade) <span class="kw">AS</span> GradedStudentCount</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Courses c</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> Enrollments e <span class="kw">ON</span> c.CourseID <span class="op">=</span> e.CourseID</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> e.Grade <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> c.CourseID, c.Title</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> <span class="fu">COUNT</span>(e.Grade) <span class="op">&gt;=</span> <span class="dv">2</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> AverageGrade <span class="kw">DESC</span>;</span></code></pre></div>
+<p>The derived-table version:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> d.CourseTitle, d.AverageGrade, d.GradedStudentCount</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> c.Title <span class="kw">AS</span> CourseTitle,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">ROUND</span>(<span class="fu">AVG</span>(e.Grade), <span class="dv">1</span>) <span class="kw">AS</span> AverageGrade,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>           <span class="fu">COUNT</span>(e.Grade) <span class="kw">AS</span> GradedStudentCount</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> Courses c</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">JOIN</span> Enrollments e <span class="kw">ON</span> c.CourseID <span class="op">=</span> e.CourseID</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> e.Grade <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span> c.CourseID, c.Title</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>) d</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> d.GradedStudentCount <span class="op">&gt;=</span> <span class="dv">2</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> d.AverageGrade <span class="kw">DESC</span>;</span></code></pre></div>
+<p>Both return the same two rows: Introduction to Programming (7.5, 3)
+and Database Management (7.2, 3).</p>
+<p><strong>Which is more readable?</strong> The <code>HAVING</code>
+version. It states the whole question in one place, in the order the
+question is asked: filter, group, aggregate, keep the groups that
+qualify. The derived-table version spreads the same logic across two
+levels and renames every column on the way out, so the reader has to
+hold the inner query in their head while reading the outer one.</p>
+<p><strong>Does MySQL execute them differently?</strong> Yes, the plans
+differ although the results are the same:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Route</th>
+<th>Plan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HAVING</code></td>
+<td><code>Courses</code> scanned (<code>type=ALL</code>),
+<code>Enrollments</code> joined on <code>fk_enroll_course</code>, then
+<code>Using temporary; Using filesort</code></td>
+</tr>
+<tr>
+<td>Derived table</td>
+<td><code>&lt;derived2&gt;</code> scanned (<code>type=ALL</code>) with
+<code>Using filesort</code>, and the derived table itself built from
+<code>Enrollments</code> joined on <code>fk_enroll_course</code></td>
+</tr>
+</tbody>
+</table>
+<p>The derived-table plan adds a level: the inner query is materialised
+and the outer query reads it as a table and sorts it again. On this data
+the cost is trivial, but the extra level is structural and does not go
+away with more data.</p>
+<p><strong>How would you check?</strong> <code>EXPLAIN</code> on both
+statements, and <code>EXPLAIN ANALYZE</code> for real timings. The
+<code>select_type</code> column shows what happened: <code>SIMPLE</code>
+for the <code>HAVING</code> route, <code>PRIMARY</code> plus
+<code>DERIVED</code> for the subquery route.</p>
+<h3 data-number="4.4" id="q4-the-no-attendance-problem"><span class="header-section-number">4.4</span> Q4 — The “no attendance”
+problem</h3>
+<p><em>Is the absence of an attendance record the same as being absent?
+What is the difference between “we recorded that this student was
+absent” and “we have no record for this student at this lesson”? How
+should a production EduConnect system handle this distinction?</em></p>
+<p>They are not the same.</p>
+<ul>
+<li>“We recorded that this student was absent” is a <strong>positive
+observation</strong>. A row exists in <code>Attendance</code> with
+<code>Status = &#39;absent&#39;</code>. The system knows, with a date and a
+lesson, that the student was not there.</li>
+<li>“We have no record for this student at this lesson” is an
+<strong>absence of evidence</strong>. The student is enrolled, the
+course had a lesson, and the attendance table has nothing for that
+pair.</li>
+</ul>
+<p>The first is a fact about the student; the second is a fact about the
+recording process. The second can arise from at least four situations
+that look identical in the database: the student was there and nobody
+marked it; the student was not there and nobody marked it; the lesson
+did not happen; or the enrolment happened after the lesson. Only the
+first is a student behaviour.</p>
+<p>Task 3.2 is a query about the second kind, so its output is a list of
+gaps in the data, not a list of students who skipped class. That is why
+the query in 3.8 scopes the check to the whole course: a student with
+one attendance record for a course has been recorded, and reporting them
+would mix a data-quality problem into a student-behaviour report.</p>
+<p><strong>How a production system should handle it.</strong></p>
+<ol type="1">
+<li><strong>Separate the two in the schema.</strong> Record every
+expected pair. If the system writes a row for every enrolled student at
+every lesson and marks the status <code>absent</code> or
+<code>unknown</code> rather than leaving the row out, “no record” stops
+being possible. A status enum with an explicit <code>unrecorded</code>
+value, or a <code>NOT NULL</code> guarantee backed by a nightly
+reconciliation job, does it.</li>
+<li><strong>Never let a query treat missing data as a negative
+observation.</strong> Task 2.3 is the example: Hoang Van Em has 0
+absences and 0 attendance records. Reporting him as “no absences” reads
+as praise; the truth is “no information”. A production report should
+publish the denominator, attendance records or expected lessons, next to
+the numerator.</li>
+<li><strong>Measure the gap.</strong> The number of missing attendance
+rows is itself a KPI, the quality of the recording process, and it is
+measured by exactly the query in Task 3.2. Run daily it produces a list
+of lessons whose attendance was never taken, which is actionable in a
+way that “student X has no attendance” is not.</li>
+</ol>
+<h3 data-number="4.5" id="q5-scalability-of-group-by"><span class="header-section-number">4.5</span> Q5 — Scalability of GROUP
+BY</h3>
+<p><em>If EduConnect grows to 200,000 users and 1,000,000 enrolments,
+which part of this query becomes the bottleneck first? What does MySQL
+do internally when it executes a GROUP BY on a large dataset with no
+index? What index would eliminate that cost?</em></p>
+<p><strong>The bottleneck.</strong> The <code>GROUP BY</code>, and
+specifically the temporary table behind it. The join is already indexed
+and stays cheap: <code>Enrollments</code> is entered through
+<code>uq_enrollment</code>, so each user row costs one index probe. The
+expensive part is what happens to the rows afterwards.</p>
+<p><strong>What MySQL does internally with no suitable index.</strong>
+It builds the groups from scratch:</p>
+<ol type="1">
+<li>Read the rows, filtered by <code>Role = &#39;student&#39;</code>.</li>
+<li>Write each row into an <strong>internal temporary table</strong>
+whose key is the grouping expression
+(<code>UserID, FullName</code>).</li>
+<li>Look up the group’s current aggregate in that table and update it,
+or insert a new group.</li>
+<li>Read the finished groups back out of the temporary table.</li>
+<li>Sort the groups again for the <code>ORDER BY</code>.</li>
+</ol>
+<p>That is what <code>Extra: Using temporary; Using filesort</code>
+means, and the <code>EXPLAIN ANALYZE</code> tree in
+<code>evidence/task3_3_scale_test.txt</code> shows it literally:
+<code>Aggregate using temporary table</code>, then
+<code>Table scan on &lt;temporary&gt;</code> over 95,000 groups. In the
+measurement in section 3.9 that temporary-table work was the single
+largest item in the plan.</p>
+<p><strong>The index that eliminates it.</strong> An index whose leading
+column is the grouping expression, so the rows arrive already grouped
+and MySQL can aggregate them as a stream instead of building a
+table:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_users_role_id_name <span class="kw">ON</span> Users (<span class="kw">Role</span>, UserID, FullName);</span></code></pre></div>
+<p>With that index the plan changes from
+<code>Aggregate using temporary table</code> to a streaming
+<code>Group aggregate</code> and <code>Stream results</code>, and the
+temporary table disappears. The measured effect on 100,000 users and
+1,000,000 enrolments is <strong>821 ms → 360 ms</strong>. Adding
+<code>FullName</code> makes the index covering, which removes the table
+lookups too.</p>
+<p>Two notes. <code>Role</code> must lead the index, because the
+<code>WHERE</code> clause has to use it as a range; with the grouping
+columns behind it, the index serves the filter and the grouping at once.
+And <code>ORDER BY EnrolledCourses DESC</code> will still show
+<code>Using filesort</code> and always will, because it sorts an
+aggregate result. That sort is over the number of groups, not the number
+of rows, so at 200,000 users it is a sort of 200,000 values rather than
+a scan of a million rows.</p>
+<h3 data-number="4.6" id="q6-business-question-versus-sql-question"><span class="header-section-number">4.6</span> Q6 — Business question versus
+SQL question</h3>
+<p><em>Task 3.1 asks for “students at risk”. You interpreted that as
+students with no grades. A product manager might mean something
+different. How does the ambiguity in a business question lead to a
+technically correct but useless query? What should a developer do before
+writing a query for a vague requirement?</em></p>
+<p>A vague business question produces a query that is correct with
+respect to <em>some</em> interpretation and useless with respect to the
+question actually asked. Task 3.1 is the clean example: it correctly
+implements “students with 3 or more courses and no grades”, and on the
+seed data it returns nothing at all. If the product manager meant
+“average grade below 5.0”, or “missed more than 50% of lessons”, or
+“submitted no assignments”, the query answers a question nobody asked,
+and it does so silently: it returns a well-formed table with headers and
+no rows, which reads as “no students are at risk”.</p>
+<p>The chain of failure is the same each time. An ambiguity in the
+requirement is resolved by an unstated assumption in the code, the
+assumption is invisible in the output, and the output is trusted. The
+dangerous part is not that the assumption is wrong but that the report
+is empty, and an empty report looks like good news.</p>
+<p><strong>What a developer should do before writing the
+query:</strong></p>
+<ol type="1">
+<li><strong>Write the interpretation down, in the business’s words,
+before writing any SQL.</strong> The handout asks for exactly this: “If
+you are unsure what the question means, state your interpretation
+explicitly before writing the query.” The interpretation is a
+deliverable other people can correct.</li>
+<li><strong>Go back to the person who asked, with the data
+attached.</strong> Not an abstract question, but the consequence: “the
+three readings return 0, 3 and 11 students on the current data”. A
+business question with numbers attached gets a decision; the same
+question without them gets a shrug.</li>
+<li><strong>Ask what the report is for, and what happens on an empty
+result.</strong> “Students at risk” is a trigger for intervention. An
+empty trigger list means either no intervention or a broken query, and
+the requester has to say which. The number of students is part of the
+requirement, not an output of it.</li>
+<li><strong>Check the assumption against the data before building on
+it.</strong> The check is cheap: count the students per interpretation.
+The moment Task 3.1’s result came back empty, the question “is the rule
+right, or is the data just like this?” had to be answered first.</li>
+<li><strong>Make the chosen definition visible in the output.</strong>
+The column names in Task 3.1, <code>EnrolledCourseCount</code> and
+<code>UngradedCourseCount</code>, state the rule that produced the row.
+A reader who disagrees can see what they disagree with.</li>
+</ol>
+<h3 data-number="4.7" id="q7-when-left-join-breaks-group-by"><span class="header-section-number">4.7</span> Q7 — When LEFT JOIN breaks
+GROUP BY</h3>
+<p><em>A student writes
+<code>SELECT c.Title, COUNT(*) AS EnrollmentCount FROM Courses c LEFT JOIN Enrollments e ON c.CourseID = e.CourseID GROUP BY c.CourseID, c.Title;</code>.
+For a course with zero enrolments, what does COUNT(</em>) return? Is
+that correct? What should the student use instead, and why?*</p>
+<p><strong>What <code>COUNT(*)</code> returns: 1.</strong> The
+<code>LEFT JOIN</code> still produces one row for Linear Algebra, the
+course row padded with NULLs on the right, and <code>COUNT(*)</code>
+counts rows rather than values, so it counts that padded row as one.</p>
+<p><strong>Table 23 — <code>COUNT(*)</code> against
+<code>COUNT(e.EnrollID)</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>CourseTitle</th>
+<th><code>COUNT(*)</code></th>
+<th><code>COUNT(e.EnrollID)</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Introduction to Programming</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Database Management</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Calculus I</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Data Structures</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Linear Algebra</td>
+<td><strong>1</strong></td>
+<td><strong>0</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Is that correct? No.</strong> The report would say one
+student is enrolled in Linear Algebra when nobody is. It is worse than
+an obvious error, because 1 is plausible: a course with a single student
+is something a real report sometimes shows, so the wrong number does not
+look wrong.</p>
+<p><strong>What to use instead, and why.</strong>
+<code>COUNT(e.EnrollID)</code>, or <code>COUNT(e.CourseID)</code>, or
+<code>COUNT(e.&lt;any non-NULL column from the right table&gt;)</code>.
+<code>COUNT(column)</code> counts the non-NULL values in that column, so
+on the padded row the expression evaluates to NULL and is not counted.
+The count is then 0, the correct answer for a course with no
+enrolments.</p>
+<p>The general rule: after a <code>LEFT JOIN</code>,
+<code>COUNT(*)</code> counts the padding while every other aggregate is
+computed over the values. <code>SUM</code> and <code>AVG</code> ignore
+NULL and are correct on the padded row; <code>COUNT(*)</code> is the one
+that is not. The family of errors in this lab comes from the same place,
+a query that looks like it is counting relationships but is counting
+rows.</p>
+<hr />
+<h2 data-number="5" id="common-mistakes"><span class="header-section-number">5</span> Common mistakes</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Why it is wrong</th>
+<th>Do this instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WHERE</code> on an aggregate</td>
+<td>The aggregate does not exist yet when <code>WHERE</code> runs</td>
+<td><code>HAVING</code> for conditions on groups</td>
+</tr>
+<tr>
+<td><code>COUNT(*)</code> after a <code>LEFT JOIN</code></td>
+<td>It counts the padded row, so a course with no enrolments reports
+1</td>
+<td><code>COUNT(e.EnrollID)</code>, which ignores NULL</td>
+</tr>
+<tr>
+<td><code>INNER JOIN</code> where <code>LEFT JOIN</code> is needed</td>
+<td>Silently drops the rows with no match</td>
+<td>Ask: do I want rows with no match?</td>
+</tr>
+<tr>
+<td><code>SUM(e.Grade) / COUNT(*)</code></td>
+<td>Divides by all rows, including the ungraded ones</td>
+<td><code>AVG(e.Grade)</code>, or
+<code>SUM(COALESCE(e.Grade,0)) / COUNT(*)</code> if the zeros are
+intended</td>
+</tr>
+<tr>
+<td><code>ORDER BY date LIMIT n</code> with no tie-break</td>
+<td>The row at the boundary is not defined</td>
+<td>Add the unique key:
+<code>ORDER BY e.EnrollDate DESC, e.EnrollID DESC</code></td>
+</tr>
+<tr>
+<td>Forgetting <code>u.Role = &#39;student&#39;</code></td>
+<td>Instructors appear in student reports</td>
+<td>Filter on <code>Role</code> whenever the report is about
+students</td>
+</tr>
+<tr>
+<td>A <code>NOT EXISTS</code> correlated on the wrong grain</td>
+<td>It answers a different question from the one asked</td>
+<td>Scope the correlation to the whole course, and verify the row count
+against a second formulation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="6" id="part-7-checklist"><span class="header-section-number">6</span> Part 7 checklist</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Item</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.1 Roster query written, correct <code>Role</code> filter
+applied</td>
+<td>done, section 3.1</td>
+</tr>
+<tr>
+<td>1.2 Both JOIN types tested, difference explained</td>
+<td>done, section 3.2 — both return 5 rows, and why</td>
+</tr>
+<tr>
+<td>1.3 Correct <code>ORDER BY</code> and <code>LIMIT</code>,
+determinism discussed</td>
+<td>done, section 3.3 — tie at the boundary found and fixed</td>
+</tr>
+<tr>
+<td>2.1 <code>LEFT JOIN</code> used, zero-enrolment courses visible</td>
+<td>done, section 3.4 — Linear Algebra shows 0</td>
+</tr>
+<tr>
+<td>2.1 Compared with the <code>INNER JOIN</code> version</td>
+<td>done — 4 rows against 5 rows</td>
+</tr>
+<tr>
+<td>2.2 NULL grades excluded from average and count</td>
+<td>done, section 3.5</td>
+</tr>
+<tr>
+<td>2.2 <code>ROUND()</code> applied, <code>HAVING</code> used
+correctly</td>
+<td>done — two courses, both with 3 graded students</td>
+</tr>
+<tr>
+<td>2.3 Absence count correct (<code>late</code> is not
+<code>absent</code>), <code>HAVING</code> applied</td>
+<td>done, section 3.6</td>
+</tr>
+<tr>
+<td>2.3 User 5’s absence discussed</td>
+<td>done — no data is not perfect attendance</td>
+</tr>
+<tr>
+<td>3.1 “ALL enrolments ungraded” logic correct</td>
+<td>done, section 3.7 — <code>COUNT(e.Grade) = 0</code></td>
+</tr>
+<tr>
+<td>3.1 Edge case (2 graded + 1 ungraded) walked through</td>
+<td>done — Table 16, the probe student is excluded</td>
+</tr>
+<tr>
+<td>3.2 Two versions written (LEFT JOIN + NOT EXISTS)</td>
+<td>done, section 3.8</td>
+</tr>
+<tr>
+<td>3.2 Performance comparison discussed</td>
+<td>done — measured at 1,000,000 rows, Table 20</td>
+</tr>
+<tr>
+<td>3.3 <code>EXPLAIN</code> output reported with <code>type</code>,
+<code>key</code>, <code>rows</code></td>
+<td>done, section 3.9 — Table 21</td>
+</tr>
+<tr>
+<td>3.3 Plain-language description of the plan</td>
+<td>done — and measured at scale, Table 22</td>
+</tr>
+<tr>
+<td>Every query has a written explanation</td>
+<td>done — one section per task</td>
+</tr>
+<tr>
+<td>No query justified by an output hint</td>
+<td>done — every result was inspected, including the empty ones</td>
+</tr>
+<tr>
+<td>All queries tested against the seed data</td>
+<td>done — all 14 files in <code>src/</code>, outputs in
+<code>evidence/</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="7" id="reflection"><span class="header-section-number">7</span> Reflection</h2>
+<p>This lab was about the gap between a query that runs and a query that
+answers.</p>
+<p>The three tasks that returned no rows taught me more than the ones
+that returned rows, because an empty result is the one that hides a
+mistake. There is nothing in the output to say the query was wrong. The
+three probes I ran inside rolled-back transactions turned rules I was
+asserting into rules I had watched work.</p>
+<p>The trap in Task 3.2 was the sharpest lesson. The query was textbook
+<code>LEFT JOIN</code> with a NULL check, it ran cleanly, it returned
+six plausible rows, and it was still wrong, because the check has to be
+scoped to the whole course rather than to one lesson at a time.</p>
+<p>I also stopped trusting the obvious answer about indexes. The index
+everyone would suggest for Task 3.3 barely moved the time, and the one
+that halved it was a wider index I would not have reached for on my
+own.</p>
+<hr />
+<h2 class="unnumbered" id="appendix-a-contents-of-the-submission-bundle">Appendix A — Contents
+of the submission bundle</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Path</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lab4_report/PDMLab4_sources_ITCSIU25055.zip</code></td>
+<td>the submission bundle: this report as a PDF, all the SQL, the
+evidence and the README</td>
+</tr>
+<tr>
+<td><code>lab4_report/src/00_schema.sql</code></td>
+<td>the six tables, exactly as the handout defines them</td>
+</tr>
+<tr>
+<td><code>lab4_report/src/01_seed.sql</code></td>
+<td>the seed data, exactly as the handout defines it</td>
+</tr>
+<tr>
+<td><code>lab4_report/src/02_task1_1_student_roster.sql</code> …
+<code>10_task3_3_explain.sql</code></td>
+<td>one file per task, each with the question, the query and the
+explanation</td>
+</tr>
+<tr>
+<td><code>lab4_report/src/11_scale_test_schema.sql</code>,
+<code>12_scale_test_data.sql</code></td>
+<td>the scale database: 100,000 users, 1,000,000 enrolments</td>
+</tr>
+<tr>
+<td><code>lab4_report/src/13_thinking_question_queries.sql</code></td>
+<td>the queries used to answer Part 8</td>
+</tr>
+<tr>
+<td><code>lab4_report/src/14_scale_test_lessons_attendance.sql</code></td>
+<td>the scale database’s lessons and 1,000,000 attendance rows</td>
+</tr>
+<tr>
+<td><code>lab4_report/evidence/*.txt</code></td>
+<td>the captured output of every query in this report</td>
+</tr>
+<tr>
+<td><code>lab4_report/PDMLab4_ITCSIU25055.docx</code></td>
+<td>the same report, editable</td>
+</tr>
+</tbody>
+</table>
+<p>AI use: Claude/OpenCode assisted with SQL authoring, testing against
+a live MySQL 8.4 instance, performance measurement, and
+documentation.</p>
+</body>
+</html>

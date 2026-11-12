@@ -1,0 +1,23 @@
+================================================================
+Lab 4 - task1_2_courses_with_department
+MySQL 8.4.11 | database: educonnect | seed data as per handout Part 4.1
+================================================================
+
++-----------------------------+---------+------------------+
+| CourseTitle                 | Credits | DepartmentName   |
++-----------------------------+---------+------------------+
+| Calculus I                  |       4 | Mathematics      |
+| Data Structures             |       3 | Computer Science |
+| Database Management         |       3 | Computer Science |
+| Introduction to Programming |       3 | Computer Science |
+| Linear Algebra              |       3 | Mathematics      |
++-----------------------------+---------+------------------+
++-----------------------------+---------+------------------+
+| CourseTitle                 | Credits | DepartmentName   |
++-----------------------------+---------+------------------+
+| Calculus I                  |       4 | Mathematics      |
+| Data Structures             |       3 | Computer Science |
+| Database Management         |       3 | Computer Science |
+| Introduction to Programming |       3 | Computer Science |
+| Linear Algebra              |       3 | Mathematics      |
++-----------------------------+---------+------------------+

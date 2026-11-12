@@ -1,0 +1,32 @@
+================================================================
+Lab 4 - task1_3_recent_enrollments
+MySQL 8.4.11 | database: educonnect | seed data as per handout Part 4.1
+================================================================
+
++---------------+-----------------------------+------------+
+| StudentName   | CourseTitle                 | EnrollDate |
++---------------+-----------------------------+------------+
+| Hoang Van Em  | Data Structures             | 2024-09-09 |
+| Hoang Van Em  | Introduction to Programming | 2024-09-09 |
+| Pham Thi Dung | Calculus I                  | 2024-09-08 |
+| Pham Thi Dung | Database Management         | 2024-09-08 |
+| Le Van Cuong  | Data Structures             | 2024-09-07 |
++---------------+-----------------------------+------------+
++---------------+-----------------------------+------------+----------+
+| StudentName   | CourseTitle                 | EnrollDate | EnrollID |
++---------------+-----------------------------+------------+----------+
+| Hoang Van Em  | Introduction to Programming | 2024-09-09 |       10 |
+| Hoang Van Em  | Data Structures             | 2024-09-09 |       11 |
+| Pham Thi Dung | Database Management         | 2024-09-08 |        8 |
+| Pham Thi Dung | Calculus I                  | 2024-09-08 |        9 |
+| Le Van Cuong  | Introduction to Programming | 2024-09-07 |        6 |
++---------------+-----------------------------+------------+----------+
++------------+----------------+
+| EnrollDate | RowsOnThatDate |
++------------+----------------+
+| 2024-09-09 |              2 |
+| 2024-09-08 |              2 |
+| 2024-09-07 |              2 |
+| 2024-09-06 |              1 |
+| 2024-09-05 |              4 |
++------------+----------------+

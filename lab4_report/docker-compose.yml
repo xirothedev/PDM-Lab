@@ -1,0 +1,39 @@
+# EduConnect lab environment for Lab 4 (IT079).
+#
+# One command recreates everything the report relies on:
+#   docker compose up -d
+#   docker compose exec mysql mysql -uroot -proot educonnect
+#
+# The two init scripts are mounted into /docker-entrypoint-initdb.d, so MySQL
+# runs them in alphabetical order the first time the data directory is created:
+#   01_schema.sql -> creates the database and the six tables
+#   02_seed.sql   -> inserts the seed data from the handout
+#
+# The scripts are run once, when the volume is first initialised. To start
+# over from scratch:
+#   docker compose down -v && docker compose up -d
+
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      # 33306 on the host, so this does not collide with a native MySQL 3306
+      - "33306:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./src/00_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./src/01_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+volumes:
+  mysql-data:

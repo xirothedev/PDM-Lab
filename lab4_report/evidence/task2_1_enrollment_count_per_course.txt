@@ -1,0 +1,22 @@
+================================================================
+Lab 4 - task2_1_enrollment_count_per_course
+MySQL 8.4.11 | database: educonnect | seed data as per handout Part 4.1
+================================================================
+
++-----------------------------+-----------------+
+| CourseTitle                 | EnrollmentCount |
++-----------------------------+-----------------+
+| Introduction to Programming |               4 |
+| Database Management         |               3 |
+| Calculus I                  |               2 |
+| Data Structures             |               2 |
+| Linear Algebra              |               0 |
++-----------------------------+-----------------+
++-----------------------------+-----------------+
+| CourseTitle                 | EnrollmentCount |
++-----------------------------+-----------------+
+| Introduction to Programming |               4 |
+| Database Management         |               3 |
+| Calculus I                  |               2 |
+| Data Structures             |               2 |
++-----------------------------+-----------------+
